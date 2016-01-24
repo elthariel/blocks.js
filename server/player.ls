@@ -1,5 +1,7 @@
-require! '../common/pos.ls'
-HasEvents = require './has_events.ls'
+require! {
+  \../common/pos.ls
+  \./has_events.ls : HasEvents
+}
 
 class IncomingPlayer implements HasEvents
   (@world, @socket, @id) ->
