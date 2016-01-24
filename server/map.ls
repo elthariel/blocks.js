@@ -1,29 +1,19 @@
-class Block
-  block_registry = []
-  @register = (@id) ->
-    if block_registry[@id]?
-      msg = "There's already a block with id #{@id}: #{that.displayName}"
-      throw new Error msg
+require! './chunk.ls'
 
-    block_registry[@id] = this
-    console.log "Registered #{@displayName} with id #{id}"
+class Map
+  chunks: {}
 
-  @registry = ->
-    block_registry
+  chunk_missing: (id) ->
+    console.log "Generating a new chunk for id #{id}"
+    generator = new chunk.PlainGenerator
+    generator.generate()
 
-class GroundBlock extends Block
-  @register 0
+  chunk_by_id: (id) ->
+    console.log "#{id}"
+    unless @chunks[id]?
+      @chunks[id] = @chunk_missing id
+    @chunks[id]
 
-class AirBlock extends Block
-  @register 1
-
-class GroundBlock extends Block
-  @register 2
-
-console.log Block.registry()
-
-#class Block
-#  (@id) ->
-
-#class Chunk
-#  size: 1000
+  chunk_by_pos: (wpos) ->
+    [id, _] = wpos.to_chunk()
+    @chunk_by_id id
