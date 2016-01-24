@@ -26,6 +26,7 @@ class Player implements HasEvents
 
   on_get_chunk: (o) ->
     cid = pos.chunk_id(o.x, o.y, o.z)
+    console.log "Requested chunk #{cid.toString()}"
     chunk = @world.map.chunk_by_id(cid)
     @emit('chunk', {pos: cid, chunk: chunk})
 

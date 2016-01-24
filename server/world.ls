@@ -14,6 +14,8 @@ class World #implements HasEvents
 
   ->
     @map.each_chunks_in_radius pos.chunk_id(0,0,0), 2, (c) ->
+    console.log '------------------==========================='
+    @map.each_chunks_in_radius pos.chunk_id(0,0,0), 2, (c) ->
       #console.log c.blocks
 
   on_new_connection: (socket) ->
