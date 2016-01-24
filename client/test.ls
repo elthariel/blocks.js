@@ -18,30 +18,41 @@ set-socket-listeners = ->
   socket := io!
 
   socket.on 'chunk' (chunk) ->
-    console.log 'Chunk !' chunk
-    newChunk = new ndarray flatten(chunk.blocks), [32 32 32]
-    game.voxels.chunks[chunk.position.join('|')] = newChunk
-    game.showChunk newChunk
-    idx = find-index (-> it is chunk.position.join('|')), game.pendingChunks
+    pos = [chunk.pos.x, chunk.pos.y, chunk.pos.z].join('|')
+    newChunk = new ndarray flatten(chunk.chunk), [32 32 32]
+    newChunk.position = [chunk.pos.x, chunk.pos.y, chunk.pos.z]
+    console.log 'NEW CHUNK' newChunk
+    game.voxels.chunks[pos] = newChunk
+    # game.showChunk newChunk
+    idx = find-index (-> it === pos), game.pendingChunks
     game.pendingChunks.splice idx, 1 if idx?
 
   socket.on \hello ->
-    socket.on \welcome avatar.yaw.position~set
+    socket.on \welcome ({x, y, z}) ->
+      start-game!
+      avatar.yaw.position.set x, y, z
     socket.emit \hello \champii
-
 
 start-game = ->
 
-  Game::loadPendingChunks = (count) ->
-    if !@asyncChunkGeneration
-      count = @pendingChunks.length
-    else
-      count = count || (@pendingChunks.length * 0.1)
-      count = Math.max(1, Math.min(count, @pendingChunks.length))
+  Game::handleChunkGeneration = ->
+    @voxels.on \missingChunk (chunkPos) ~>
+      if not find (-> it is chunkPos.join('|')), @pendingChunks
+        @pendingChunks.push chunkPos.join('|')
+        @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
+    @voxels.requestMissingChunks(@worldOrigin)
+    # @loadPendingChunks(@pendingChunks.length)
 
-    for i from 0 til count
-      chunkPos = @pendingChunks[i].split('|')
-      @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
+  Game::loadPendingChunks = (count) ->
+    # if !@asyncChunkGeneration
+    #   count = @pendingChunks.length
+    # else
+    #   count = count || (@pendingChunks.length * 0.1)
+    #   count = Math.max(1, Math.min(count, @pendingChunks.length))
+    #
+    # for i from 0 til count
+    #   chunkPos = @pendingChunks[i].split('|')
+    #   @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
 
   game := Game do
     generateChunks: false
@@ -94,4 +105,3 @@ start-game = ->
     else voxel-walk.startWalking()
 
 set-socket-listeners!
-start-game!
