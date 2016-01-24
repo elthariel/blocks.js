@@ -1,3 +1,4 @@
+global import require 'prelude-ls'
 
 require! "./socket_io_server.ls"
 
