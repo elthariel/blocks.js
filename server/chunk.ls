@@ -56,12 +56,11 @@ class Chunk
 class SimpleChunkGenerator
   generate: (cid) ->
     chunk = new Chunk
-    chunk.map (x, y, z, b) ~>
-      @block x, y, z, b
+    chunk.map @~block
     chunk
 
-  block: (x, y, z, b) ->
-    throw new Error('Implement me !')
+  block: (x, y, z, b) -> ...
+    # throw new Error('Implement me !')
 
 class AirGenerator extends SimpleChunkGenerator
     block: (x, y, z, b) ->

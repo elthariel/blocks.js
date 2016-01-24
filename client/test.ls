@@ -19,11 +19,13 @@ set-socket-listeners = ->
 
   socket.on 'chunk' (chunk) ->
     pos = [chunk.pos.x, chunk.pos.y, chunk.pos.z].join('|')
-    newChunk = new ndarray flatten(chunk.chunk), [32 32 32]
+    newChunk = {voxels: new Int8Array flatten(chunk.chunk), dims: [32 32 32]}
+    # newChunk = game.voxels.generateChunk.apply game.voxels, [chunk.pos.x, chunk.pos.y, chunk.pos.z]
     newChunk.position = [chunk.pos.x, chunk.pos.y, chunk.pos.z]
     console.log 'NEW CHUNK' newChunk
     game.voxels.chunks[pos] = newChunk
     # game.showChunk newChunk
+
     idx = find-index (-> it === pos), game.pendingChunks
     game.pendingChunks.splice idx, 1 if idx?
 
@@ -39,33 +41,17 @@ start-game = ->
     @voxels.on \missingChunk (chunkPos) ~>
       if not find (-> it is chunkPos.join('|')), @pendingChunks
         @pendingChunks.push chunkPos.join('|')
-        @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
+        socket.emit 'get_chunk' {x: chunkPos[0] .|. 0, y: chunkPos[1] .|. 0, z: chunkPos[2] .|. 0}
     @voxels.requestMissingChunks(@worldOrigin)
-    # @loadPendingChunks(@pendingChunks.length)
-
-  Game::loadPendingChunks = (count) ->
-    # if !@asyncChunkGeneration
-    #   count = @pendingChunks.length
-    # else
-    #   count = count || (@pendingChunks.length * 0.1)
-    #   count = Math.max(1, Math.min(count, @pendingChunks.length))
-    #
-    # for i from 0 til count
-    #   chunkPos = @pendingChunks[i].split('|')
-    #   @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
 
   game := Game do
     generateChunks: false
     mesher: voxel.meshers.greedy
-    chunkDistance: 4
+    chunkDistance: 1
     materials: <[#888]>
     materialFlatColor: true
     worldOrigin: [0 0 0]
     controls: discreteFire: true
-
-  game.voxels.asyncLoadChunk = (x, y, z, done) ->
-    console.log 'ask Chunk !' {x, y, z}
-    socket.emit 'get_chunk' {x, y, z}
 
   game.handleChunkGeneration!
 

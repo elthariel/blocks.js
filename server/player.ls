@@ -7,7 +7,7 @@ require! {
 class IncomingPlayer
   (@world, @socket, @id) ->
     @socket.once 'hello', @~on_hello
-    @socket.emit('hello', {id: @id})
+    @socket.emit 'hello', id: @id
 
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
@@ -28,10 +28,10 @@ class Player implements HasEvents
     cid = pos.chunk_id(o.x, o.y, o.z)
     console.log "Requested chunk #{cid.toString()}"
     chunk = @world.map.chunk_by_id(cid)
-    @emit('chunk', {pos: cid, chunk: chunk})
+    @emit 'chunk', {pos: cid, chunk: chunk}
 
   on_move: (o) ->
     @pos.update(o.x, o.y, o.z)
-    @emit_to_nearby_players('move', {id: @id, pos: @pos})
+    @emit_to_nearby_players 'move', {id: @id, pos: @pos}
 
 module.exports = {Player, IncomingPlayer}

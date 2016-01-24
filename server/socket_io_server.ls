@@ -28,7 +28,7 @@ class SocketIoServer
     b.add path.resolve __dirname, '../client/test.ls'
     @app.get \/ (req, res) ->
       b.bundle (err, assets) ->
-        console.log err
+        console.log err if err?
         return res.status 500 .send err if err?
 
         res.status 200 .send "<html><head></head><body><script src=\"/socket.io/socket.io.js\"></script><script>#{assets.toString!}</script></body></html>"
