@@ -5,46 +5,21 @@ require! {
   browserify
   \browserify-livescript
   \socket.io : io
-
+  \socketio-wildcard : wildcard
 }
 
-class Player
-  (@world, @socket, @id) ->
-    @socket.on 'move', @~on_move
-
-  on_move: (pos) ->
-    @world.notify_all_but(@id, 'move', pos)
-
-class World
-  last_player_id: 0
-  players: []
-
-  notify_all: (type, msg) ->
-    @players |> each ->
-      it.socket.emit type, msg
-
-  notify_all_but: (id, type, msg) ->
-    @players |> each ->
-      if it.id != id
-        it.socket.emit(type, msg)
-
-  create_player: (socket) ->
-    player = new Player(this, socket, @last_player_id)
-    @players[@last_player_id++] = player
-
 class SocketIoServer
-  world = new World
-
-  (@port) ->
+  (@world, @port) ->
     @app = express()
     @http = http.createServer(@app)
     @io = io(@http)
+    @io.use wildcard()
 
     @io.on 'connection' @~on_connect
 
   on_connect: (socket) ->
     console.log 'Connection from #{socket}'
-    world.create_player(socket)
+    @world.on_new_connection(socket)
 
   prepare_client: ->
     @app.use express.static __dirname + \/../client/public
