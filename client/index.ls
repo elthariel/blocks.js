@@ -19,8 +19,8 @@ newCube = ->
   scene.add cube
 
   for , i in geometry.faces by 2
-    geometry.faces[i].color.setHex it
-    geometry.faces[i + 1].color.setHex it
+    geometry.faces[i].color.setHex color = Math.random() * 0xFFFFFF
+    geometry.faces[i + 1].color.setHex color
 
   {cube, geometry}
 
@@ -29,9 +29,9 @@ renderer.setPixelRatio window.devicePixelRatio
 renderer.setSize window.innerWidth, window.innerHeight
 document.body.appendChild renderer.domElement
 
-render = ->
-  renderer.render scene, camera
+render = -> renderer.render scene, camera
 
+player = newCube!
 render!
 
 document.addEventListener \mousemove ->
@@ -39,16 +39,13 @@ document.addEventListener \mousemove ->
   render!
 
 createPlayer = ->
-  player = players[it.color] = it{x, y}
-  player <<< newCube it.color
+  player = players[it.id] = it
+  player <<< newCube!
 
 fetchOrCreatePlayer = ->
-  players[it.color] or createPlayer it
+  players[it.id?] or createPlayer it
 
 socket = io!
-
-socket.emit \hello
-socket.on   \hello -> player := newCube it
 
 socket.on \position ->
   player = fetchOrCreatePlayer it
