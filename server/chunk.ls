@@ -54,20 +54,29 @@ class Chunk
       b
 
 class SimpleChunkGenerator
-  generate: ->
+  generate: (cid) ->
     chunk = new Chunk
     chunk.map (x, y, z, b) ~>
       @block x, y, z, b
     chunk
 
   block: (x, y, z, b) ->
-    new block.AirBlock
+    throw new Error('Implement me !')
 
-class PlainGenerator extends SimpleChunkGenerator
-  block: (x, y, z, b) ->
-    if z > Chunk.size / 2
+class AirGenerator extends SimpleChunkGenerator
+    block: (x, y, z, b) ->
       new block.AirBlock
-    else
+
+class GroundGenerator extends SimpleChunkGenerator
+    block: (x, y, z, b) ->
       new block.GroundBlock
+
+class PlainGenerator
+  generate: (cid) ->
+    if cid.z >= 0
+      gen = new AirGenerator
+    else
+      gen = new GroundGenerator
+    gen.generate(cid)
 
 module.exports = {Chunk, SimpleChunkGenerator, PlainGenerator}

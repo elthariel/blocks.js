@@ -10,6 +10,8 @@ class Pos
   eq: (other) ->
     @x == other.x && @y == other.y && @z == other.z
 
+  update: (@x, @y, @z) ->
+
   in_radius: (other_pos, radius) ->
     other_pos.x >= @x - radius && other_pos.x <= @x + radius
       && other_pos.y >= @y - radius && other_pos.y <= @y + radius

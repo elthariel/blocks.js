@@ -3,14 +3,13 @@ require! '../common/pos.ls'
 
 class Map
   chunks: {}
+  generator: new chunk.PlainGenerator
 
   chunk_missing: (cid) ->
     console.log "Generating a new chunk for id #{cid}"
-    generator = new chunk.PlainGenerator
-    generator.generate()
+    @generator.generate(cid)
 
   chunk_by_id: (cid) ->
-    console.log "#{cid}"
     unless @chunks[cid]?
       @chunks[cid] = @chunk_missing cid
     @chunks[cid]
@@ -20,8 +19,10 @@ class Map
     @chunk_by_id id
 
   each_chunks_in_radius: (cid, radius, f) ->
-    for x from cid.x - radius til cid.x + radius
-      for y from cid.y - radius til cid.y + radius
-        for z from cid.z - radius til cid.z + radius
-          cid = pos.chunk_id(x, y, z)
-          f @chunk_by_id(cid)
+    for x from cid.x - radius to cid.x + radius
+      for y from cid.y - radius to cid.y + radius
+        for z from cid.z - radius to cid.z + radius
+          iter = pos.chunk_id(x, y, z)
+          f @chunk_by_id(iter)
+
+module.exports = {Map}
