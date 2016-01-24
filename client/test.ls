@@ -21,10 +21,7 @@ Game::loadPendingChunks = (count) ->
 
   for i from 0 til count
     chunkPos = @pendingChunks[i].split('|')
-    @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0, (err, chunk) ~>
-      @showChunk(chunk) if @isClient
-
-  @pendingChunks.splice(0, count) if count
+    @voxels.asyncLoadChunk chunkPos[0] .|. 0, chunkPos[1] .|. 0, chunkPos[2] .|. 0
 
 game = Game do
   generateChunks: false
@@ -35,15 +32,15 @@ game = Game do
   worldOrigin: [0 0 0]
   controls: discreteFire: true
 
+socket.on 'chunk' (chunk) ->
+  newChunk = new ndarray flatten(chunk.blocks), [32 32 32]
+  game.voxels.chunks[chunk.position.join('|')] = newChunk
+  game.showChunk newChunk
+  idx = find-index (-> it is chunk.position.join('|')), game.pendingChunks
+  game.pendingChunks.splice idx, 1 if idx?
+
 game.voxels.asyncLoadChunk = (x, y, z, done) ->
   socket.emit 'request_chunk' {x, y, z}
-  socket.once 'chunk' ->
-    chunk = new ndarray [], [32 32 32]
-    for arr1, x in it
-      for arr2, y in arr1
-        for val, z in arr2
-          chunk.set x, y, z, val
-    done null, chunk
 
 game.handleChunkGeneration!
 

@@ -1,5 +1,6 @@
 
 HasEvents =
+  # register_socket: (.on \* @~_on_event)
   register_socket: (socket) ->
     socket.on '*', (type, msg) ~>
       @_on_event(type, msg)
