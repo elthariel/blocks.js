@@ -25,6 +25,9 @@ class Block
   toJSON: ->
     id: @id()
 
+  stackable: true
+  stack_size: 64
+
 class NilBlock extends Block
   @register 0
 
