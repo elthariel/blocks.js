@@ -47,7 +47,7 @@ class SocketIoServer
     world.create_player(socket)
 
   prepare_client: ->
-    @app.use express.static __dirname + \../client/public
+    @app.use express.static __dirname + \/../client/public
     b = browserify extensions: [\.ls \.js]
     b.transform browserify-livescript
     b.add path.resolve __dirname, '../client/test.ls'
