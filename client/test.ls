@@ -36,13 +36,13 @@ game = Game do
   controls: discreteFire: true
 
 game.voxels.asyncLoadChunk = (x, y, z, done) ->
-  socket.emit 'request_chunk' {x, y, z}
-  socket.once 'chunk' ->
+  socket.emit 'get_chunk' {x, y, z}
+  socket.on 'chunk' ->
     chunk = new ndarray [], [32 32 32]
     for arr1, x in it
       for arr2, y in arr1
         for val, z in arr2
-          chunk.set x, y, z, val
+          chunk.set x, y, z, val.id
     done null, chunk
 
 game.handleChunkGeneration!
