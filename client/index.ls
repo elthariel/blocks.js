@@ -35,7 +35,7 @@ player = newCube!
 render!
 
 document.addEventListener \mousemove ->
-  socket.emit \position player.cube.position <<< it{x, y}
+  socket.emit \move player.cube.position <<< it{x, y}
   render!
 
 createPlayer = ->
@@ -43,11 +43,13 @@ createPlayer = ->
   player <<< newCube!
 
 fetchOrCreatePlayer = ->
-  players[it.id?] or createPlayer it
+  players[it.id] or createPlayer it
 
 socket = io!
 
-socket.on \position ->
+socket.on \move ->
+  console.log 'Move!' it
   player = fetchOrCreatePlayer it
   player <<< it{x, y}
+  player.cube.position <<< it{x, y}
   render!

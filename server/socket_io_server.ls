@@ -1,16 +1,9 @@
 class Player
   (@world, @socket, @id) ->
-    @socket.on 'move', (msg) ~>
-      @on_player_move msg.split(':')
-    @socket.on 'hello', (msg) ~>
-      @on_hello(msg)
+    @socket.on 'move', @~on_move
 
-  on_move: (x, y, z) ->
-    @world.notify_all_but(@id, 'player_moved', "#{@id}:#{x}:#{y}:#{z}")
-
-  on_hello: ->
-    console.log("Player #{@id} says hello !!!")
-
+  on_move: (pos) ->
+    @world.notify_all_but(@id, 'move', pos)
 
 class World
   last_player_id: 0
@@ -18,23 +11,23 @@ class World
 
   notify_all: (type, msg) ->
     @players |> each ->
-      it.emit type, msg
+      it.socket.emit type, msg
 
   notify_all_but: (id, type, msg) ->
     @players |> each ->
       if it.id != id
-        it.emit(type, msg)
+        it.socket.emit(type, msg)
 
   create_player: (socket) ->
     player = new Player(this, socket, @last_player_id)
-    @last_player_id += 1
+    @players[@last_player_id++] = player
 
-    notify_all 'new_player', player.id
-
-require! 'path'
-require! 'express'
-require! 'http'
-io = require 'socket.io'
+require! {
+  path
+  express
+  http
+  \socket.io : io
+}
 
 class SocketIoServer
   world = new World
@@ -44,16 +37,16 @@ class SocketIoServer
     @http = http.createServer(@app)
     @io = io(@http)
 
-    @io.on 'connection', (socket) ~>
-      @on_connect socket
+    @io.on 'connection' @~on_connect
 
   on_connect: (socket) ->
     console.log 'Connection from #{socket}'
-    @world.create_player(socket)
+    world.create_player(socket)
 
   start: ->
-    @app.use(express.static(__dirname + '/public'))    
-    @app.listen @port, ~>
+    @app.use(\/, express.static(__dirname + '/../client'))
+    @app.get \/ (req, res) -> res.sendFile path.resolve \. \../client/index.html
+    @http.listen @port, ~>
       console.log "Listening on port *:#{@port}"
 
 module.exports = {SocketIoServer}
