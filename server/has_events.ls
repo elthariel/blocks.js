@@ -9,8 +9,8 @@ HasEvents =
     type = data.data[0]
     msg = data.data[1]
     handler_name = "on_#{type}"
-    if this[handler_name]?
-      this[handler_name](msg)
+    if @[handler_name]?
+      @[handler_name](msg)
     else
       console.log "Missing hanlder for msg #{type}"
       console.log type

@@ -9,7 +9,7 @@ class IncomingPlayer implements HasEvents
     @emit('hello', {id: @id})
 
   on_hello: (o) ->
-    world.on_new_player(@socket, @id, o.name)
+    @world.on_new_player(@socket, @id, o.name)
 
 class Player implements HasEvents
   (@world, @socket, @id, @name) ->

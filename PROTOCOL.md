@@ -6,3 +6,6 @@ Client: hello {name: xxx}
 Server: welcome <POS>
 Client: get_chunk <POS>
 Server: chunk {blocks: [x][y][z]{id: xxx}}
+
+
+test = ^^test2
