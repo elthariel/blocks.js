@@ -1,4 +1,5 @@
 window import require \prelude-ls
+require! \./three : THREE
 
 players = {}
 player = {}
