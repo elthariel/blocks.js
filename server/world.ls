@@ -1,7 +1,9 @@
 
-require! './map.ls'
-require! './player.ls'
-require! '../common/pos.ls'
+require! {
+  \./map.ls
+  \./player.ls
+  \../common/pos.ls
+}
 
 # HasEvents = require('./has_events')
 
@@ -19,9 +21,9 @@ class World #implements HasEvents
     @last_player_id++
 
   on_new_player: (socket, id, name) ->
-    player = new player.Player(this, socket, id, name)
+    p = new player.Player(this, socket, id, name)
     @emit_to_all 'player_new', {id: id, name: name}
-    @players.push player
+    @players[p.id] = p
 
   each_nearby_players: (wpos, radius, f) ->
     @players |> each ->

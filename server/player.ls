@@ -4,10 +4,10 @@ require! {
   \./has_events.ls : HasEvents
 }
 
-class IncomingPlayer implements HasEvents
+class IncomingPlayer
   (@world, @socket, @id) ->
-    @register_socket @socket
-    @emit('hello', {id: @id})
+    @socket.once 'hello', @~on_hello
+    @socket.emit('hello', {id: @id})
 
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
