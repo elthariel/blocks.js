@@ -24,7 +24,7 @@ set-socket-listeners = ->
     newChunk.position = [chunk.pos.x, chunk.pos.y, chunk.pos.z]
     console.log 'NEW CHUNK' newChunk
     game.voxels.chunks[pos] = newChunk
-    # game.showChunk newChunk
+    game.showChunk newChunk
 
     idx = find-index (-> it === pos), game.pendingChunks
     game.pendingChunks.splice idx, 1 if idx?
@@ -37,6 +37,7 @@ set-socket-listeners = ->
 
 start-game = ->
 
+  Game::loadPendingChunks = ->
   Game::handleChunkGeneration = ->
     @voxels.on \missingChunk (chunkPos) ~>
       if not find (-> it is chunkPos.join('|')), @pendingChunks
@@ -47,7 +48,7 @@ start-game = ->
   game := Game do
     generateChunks: false
     mesher: voxel.meshers.greedy
-    chunkDistance: 1
+    chunkDistance: 2
     materials: <[#888]>
     materialFlatColor: true
     worldOrigin: [0 0 0]

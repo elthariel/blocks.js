@@ -1,7 +1,7 @@
 require! {
   \../common/consts.ls
   \../common/pos.ls
-  \./has_events.ls : HasEvents
+  \../common/Player.ls
 }
 
 class IncomingPlayer
@@ -12,7 +12,7 @@ class IncomingPlayer
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
 
-class Player implements HasEvents
+class PlayerServer extends Player
   (@world, @socket, @id, @name) ->
     @register_socket @socket
     @pos = pos.world_pos(0, 0, 20)
@@ -34,4 +34,4 @@ class Player implements HasEvents
     @pos.update(o.x, o.y, o.z)
     @emit_to_nearby_players 'move', {id: @id, pos: @pos}
 
-module.exports = {Player, IncomingPlayer}
+module.exports = {Player: PlayerServer, IncomingPlayer}
