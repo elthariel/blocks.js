@@ -1,7 +1,7 @@
 require! {
   \../common/consts.ls
   \../common/pos.ls
-  \./has_events.ls : HasEvents
+  \../common/has_events.ls : HasEvents
 }
 
 class IncomingPlayer
@@ -13,8 +13,9 @@ class IncomingPlayer
     @world.on_new_player(@socket, @id, o.name)
 
 class Player implements HasEvents
-  (@world, @socket, @id, @name) ->
-    @register_socket @socket
+  (@world, socket, @id, @name) ->
+    @register_socket socket
+    @events \move, \get_chunk
     @pos = pos.world_pos(0, 0, 20)
     @emit 'welcome', @pos
 
