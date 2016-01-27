@@ -44,13 +44,22 @@ class ChunkPos extends Pos
       @z + @@size * cid.z)
 
 chunk_id = (x, y, z) ->
-  new ChunkId x, y, z
+  if x.x?
+    new ChunkId x.x, x.y, x.z
+  else
+    new ChunkId x, y, z
 
 world_pos = (x, y, z) ->
-  new WorldPos x, y, z
+  if x.x?
+    new WorldPos x.x, x.y, x.z
+  else
+    new WorldPos x, y, z
 
 chunk_pos = (x, y, z) ->
-  new ChunkPos x, y, z
+  if x.x?
+    new ChunkPos x.x, x.y, x.z
+  else
+    new ChunkPos x, y, z
 
 module.exports = {chunk_id, world_pos, chunk_pos}
 

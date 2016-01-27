@@ -13,8 +13,9 @@ class IncomingPlayer
     @world.on_new_player(@socket, @id, o.name)
 
 class PlayerServer extends Player
-  (@world, @socket, @id, @name) ->
-    @register_socket @socket
+  (@world, socket, @id, @name) ->
+    @register_socket socket
+    @events \move, \get_chunk
     @pos = pos.world_pos(0, 0, 20)
     @emit 'welcome', @pos
 
