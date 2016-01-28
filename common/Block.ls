@@ -1,5 +1,11 @@
 class Block
   block_registry = []
+
+  ->
+    @deported_ctor ...
+
+  deported_ctor: ->
+
   @register = (id) ->
     @::id = ->
       id

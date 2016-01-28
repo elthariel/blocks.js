@@ -1,12 +1,16 @@
-class Block
-  
-class Chunk
+require! {
+  \../common/Map : MapCommon
+  \../common/pos
+  \./Chunk
+}
 
+class Map extends MapCommon
 
-class Map
+  ->
+    @chunk_by_id pos.chunk_id(0 0 0).toString!
 
-  (@socket) ->
-
+  chunk_missing: ->
+    @chunks[it] = new Chunk
 
 
 module.exports = Map

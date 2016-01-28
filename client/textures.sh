@@ -6,7 +6,7 @@ if [ -z $1 ]; then
 fi
 
 dest="./public/"
-dir=$(mktemp -d)
+dir="/tmp/lol"
 
 echo "Work dir: $dir"
 
@@ -20,6 +20,6 @@ echo "Copying textures to $dest"
 cp -rf $dir/assets/minecraft/textures $dest
 
 echo "Cleaning work dir"
-rm -rf $dir
+# rm -rf $dir
 
 exit 0
