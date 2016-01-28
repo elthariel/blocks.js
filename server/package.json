@@ -2,7 +2,7 @@
   "name": "server",
   "version": "0.0.1",
   "description": "Server for Blocks",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +11,7 @@
   "dependencies": {
     "express": "^4.13.4",
     "prelude-ls": "^1.1.2",
+    "reload": "^0.7.0",
     "socket.io": "^1.4.4",
     "socketio-wildcard": "^0.3.0"
   },
