@@ -1,9 +1,9 @@
 require! {
   '../common/Block'
-  '../common/Chunk' : Chunk
+  '../common/Chunk' : ChunkCommon
 }
 
-class ChunkServer extends Chunk
+class Chunk extends ChunkCommon
 
 class SimpleChunkGenerator
   generate: (cid) ->
@@ -30,4 +30,4 @@ class PlainGenerator
       gen = new GroundGenerator
     gen.generate(cid)
 
-module.exports = {Chunk: ChunkServer, SimpleChunkGenerator, PlainGenerator}
+module.exports = {Chunk, SimpleChunkGenerator, PlainGenerator}

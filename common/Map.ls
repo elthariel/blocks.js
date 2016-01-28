@@ -1,7 +1,4 @@
-require! './chunk.ls'
-require! './pos.ls'
-
-export class Map
+class Map
   chunks: {}
 
   chunk_missing: (cid) -> ...
@@ -21,3 +18,5 @@ export class Map
         for z from cid.z - radius to cid.z + radius
           iter = pos.chunk_id(x, y, z)
           f @chunk_by_id(iter)
+
+module.exports = Map

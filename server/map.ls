@@ -1,7 +1,7 @@
 require! './chunk.ls'
-require! '../common/Map.ls'
+require! '../common/Map': MapCommon
 
-export class MapServer extends Map
+export class Map extends MapCommon
   generator: new chunk.PlainGenerator
 
   chunk_missing: (cid) ->

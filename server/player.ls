@@ -1,7 +1,7 @@
 require! {
   \../common/consts.ls
   \../common/pos.ls
-  \../common/Player.ls
+  \../common/Player.ls : PlayerCommon
 }
 
 class IncomingPlayer
@@ -12,8 +12,9 @@ class IncomingPlayer
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
 
-class PlayerServer extends Player
+class Player extends PlayerCommon
   (@world, socket, @id, @name) ->
+    console.log \Player @
     @register_socket socket
     @events \move, \get_chunk
     @pos = pos.world_pos(0, 0, 20)
@@ -35,4 +36,4 @@ class PlayerServer extends Player
     @pos.update(o.x, o.y, o.z)
     @emit_to_nearby_players 'move', {id: @id, pos: @pos}
 
-module.exports = {Player: PlayerServer, IncomingPlayer}
+module.exports = {Player, IncomingPlayer}

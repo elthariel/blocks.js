@@ -3,7 +3,7 @@ require! './Block'
 
 class Chunk
   const @size = CHUNK_SIZE
-  @nil = new Block.NilBlock
+  @nil = new Block.Nil
 
   ->
     @blocks = []

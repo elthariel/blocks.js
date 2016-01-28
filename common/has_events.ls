@@ -2,20 +2,27 @@
 HasEvents =
   # register_socket: (.on \* @~_on_event)
   register_socket: (socket) ->
-    socket.on '*', (type, msg) ~>
-      @_on_event(type, msg)
+    @_socket = socket
 
-  _on_event: (data) ->
-    type = data.data[0]
-    msg = data.data[1]
-    handler_name = "on_#type"
-    if @["on_#type"]?
-      @["on_#type"] msg
+  events: (...names) ->
+    names |> each (name) ~>
+      console.log "Register event #{name}"
+      @_socket.on name, (msg) ~>
+        @_on_event name, msg
+
+  _on_event: (type, msg) ->
+    console.log type, msg
+    handler_name = "on_#{type}"
+    if @[handler_name]?
+       @[handler_name] msg
     else
       console.log "Missing hanlder for msg #type"
       console.log type
 
   emit: (type, msg) ->
-    @socket.emit(type, msg)
+    @_socket.emit(type, msg)
+
+  once: (type, fun) ->
+    @_socket.once type, fun
 
 module.exports = HasEvents
