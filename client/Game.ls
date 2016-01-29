@@ -15,7 +15,7 @@ class Game
 
   handshake: ->
     @socket.on \hello ~>
-      @socket.on \welcome @~start
+      @socket.once \welcome @~start
       @socket.emit \hello @login
 
   start: (pos) ->
