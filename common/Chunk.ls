@@ -3,51 +3,45 @@ require! './Block'
 
 class Chunk
   const @size = CHUNK_SIZE
+  @index_from_xyz = (x, y, z) ->
+    x + @size * y + @size * @size * z
 
   ->
-    @create_empty_chunk!
+    @blocks = new Array(@@size ** 3)
     @fill_from_bitmap do ~>
       for x til @@size
         for y til @@size
           for z til @@size
             0
 
-  create_empty_chunk: ->
-    @blocks = []
-    for x til @@size
-      @blocks[x] = []
-      for y til @@size
-        @blocks[x][y] = []
-        # for z til @@size
-        #   @blocks[x][y][z] = new Block.Nil
-
   fill_from_bitmap: (bitmap) ->
     @map (x, y, z, block) ->
       new (Block.registry![bitmap[x][y][z]]) x, y, z
 
-  get_block: (x, y, z) ->
+  get: (x, y, z) ->
+    # Thanks for deleting my code
     # if is-type('Pos', x):
     #   [x, y, z] = x.x, x.y, x.z
-    @blocks[x][y][z]
+    @blocks[@@index_from_xyz x, y, z]
 
-  set_block: (x, y, z, block) ->
+  set: (x, y, z, block) ->
     # if is-type('Pos', x):
     #   block = y
     #   [x, y, z] = x.x, x.y, x.z
-    @blocks[x][y][z] = block
+    @blocks[@@index_from_xyz x, y, z] = block
 
   each: (f) ->
     for x til @@size
       for y til @@size
         for z til @@size
-          f x, y, z, @get_block(x, y, z)
+          f x, y, z, @get(x, y, z)
 
   map: (f) ->
     for x til @@size
       for y til @@size
         for z til @@size
-          block = f(x, y, z, @get_block(x, y, z))
-          @set_block(x, y, z, block)
+          block = f(x, y, z, @get(x, y, z))
+          @set(x, y, z, block)
 
   toJSON: ->
     @blocks
