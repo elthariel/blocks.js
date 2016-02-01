@@ -1,42 +1,41 @@
 require! {
   fs
-  crypto
 }
 
 class Seed
   @size = 1
 
+  (@buffer) ->
+
   @load = (path) ->
     fd = fs.openSync(path, 'r')
 
     if fd < 0
-      throw new Exception("Unable to open #{path} for reading")
+      throw new Error("Unable to open #{path} for reading")
 
     data = new Buffer(@size)
-    read_size = fs.readFileSync(fd, data, 0, @size)
+    read_size = fs.readSync(fd, data, 0, @size)
     fs.closeSync(fd)
 
     if read_size != @@size
-      throw new Exception("Error reading seed data #{read_size}")
+      throw new Error("Error reading seed data: #{read_size} byte read")
 
     new Seed(data)
 
   @generate = ->
-    new Seed(crypto.randomBytes(@size))
-
-  (@buffer) ->
+    @load('/dev/urandom')
 
   save: (path) ->
     fd = fs.openSync(path, 'w')
 
     if fd < 0
-      throw new Exception("Unable to open #{path} for writing")
+      throw new Error("Unable to open #{path} for writing")
 
-    write_size = fd.writeFileSync(fd, @buffer)
+    write_size = fs.writeSync(fd, @buffer, 0, @buffer.length)
     fs.closeSync(fd)
 
     if write_size != @@size
-      throw new Exception("Unable to write seed data #{write_size}")
+      throw new Error("Unable to write seed data: #{write_size} byte written")
 
   get8: (x) ->
     x = x % @@size
