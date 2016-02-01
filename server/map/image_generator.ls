@@ -89,24 +89,16 @@ class ValueCombiner extends Generator
     values = map (.point x, y), @generators
     @combiner.apply(@, values)
 
-class Test extends Generator
-  (seed, @freq = 100) ->
-    super s
-
-  point: (x, y) ->
-    v = perlin.simplex2(x / 10, y / 10) + perlin.simplex2(x / 10 + 10, y / 10 + 10)
-    if v == 0
-      return 255
-    else
-      return 0
-
 class NoiseGenerator extends Generator
-  (seed, freq) ->
+  (seed, @freq) ->
     super seed
 
   point: (x, y) ->
-    v = Math.floor(Math.rand() * (@freq / 2))
-    v == 0
+    v = Math.floor(Math.random() * (@freq / 2))
+    if v == 0
+      255
+    else
+      0
 
 img_to_png = (img) ->
   save_pixels(img, "png").pipe(process.stdout)
@@ -115,16 +107,15 @@ module.exports = {
   Generator,
   PerlinGenerator,
   SimplexGenerator,
+  NoiseGenerator
   BiomeGenerator,
   ValueMapper,
   ValueCombiner,
   img_to_png
 }
-#
-s = Seed.generate!
-# g = new BiomeGenerator(s)
-# b = new ValueMapper s, g, (v) ->
-#   (v / 6) * 255
-g = new Test(s, 100)
-img = g.gen(0, 1000, 0, 1000)
-img_to_png img
+
+# Official test leakage
+# s = Seed.generate!
+# g = new NoiseGenerator(s, 1000)
+# img = g.gen(0, 1000, 0, 1000)
+# img_to_png img

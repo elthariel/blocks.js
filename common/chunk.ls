@@ -1,13 +1,16 @@
-require! './consts.ls'
-require! './Block'
+require! {
+  \./consts.ls
+  \./Block
+  ndarray
+}
 
 class Chunk
   const @size = CHUNK_SIZE
-  @index_from_xyz = (x, y, z) ->
-    x + @size * y + @size * @size * z
 
   ->
-    @blocks = new Array(@@size ** 3)
+    @blocks = ndarray new Array(@@size ** 3), [@@size, @@size, @@size]
+
+    # Let's get rid of this pretty soon ;)
     @fill_from_bitmap do ~>
       for x til @@size
         for y til @@size
@@ -19,16 +22,10 @@ class Chunk
       new (Block.registry![bitmap[x][y][z]]) x, y, z
 
   get: (x, y, z) ->
-    # Thanks for deleting my code
-    # if is-type('Pos', x):
-    #   [x, y, z] = x.x, x.y, x.z
-    @blocks[@@index_from_xyz x, y, z]
+    @blocks.get x, y, z
 
   set: (x, y, z, block) ->
-    # if is-type('Pos', x):
-    #   block = y
-    #   [x, y, z] = x.x, x.y, x.z
-    @blocks[@@index_from_xyz x, y, z] = block
+    @blocks.set x, y, z, block
 
   each: (f) ->
     for x til @@size
@@ -54,8 +51,6 @@ class Chunk
   fromJSON: (json) ->
     json = JSON.parse json
     @map (x, y, z) ->
-      b = Block.fromJSON(json[x][y][z])
-      #console.log b
-      b
+      Block.fromJSON(json[x][y][z])
 
 module.exports = Chunk

@@ -1,2 +1,3 @@
 
-const global.CHUNK_SIZE = 32
+const global.consts =
+  CHUNK_SIZE: 32
