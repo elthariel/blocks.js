@@ -9,8 +9,8 @@ class Generator
   (@seed) ->
 
   gen: (x1, x2, y1, y2) ->
-    [w, h] = [x2 - x1, y2 - y1]
-    img = ndarray(new Float32Array(w * h), [w, h])
+    [w, h]:wh = [x2 - x1, y2 - y1]
+    img = ndarray(new Float32Array(w * h), wh)
 
     for x from x1 til x2
       for y from y1 til y2
