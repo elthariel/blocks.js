@@ -12,7 +12,7 @@ class World
 
   ->
     @map.each_chunks_in_radius pos.chunk_id(0,0,0), 1, (c) ->
-      console.log 'Chunk :', c.blocks
+      console.log 'Chunk: ', c.blocks
 
   on_new_connection: (socket) ->
     incoming = new player.IncomingPlayer @, socket, @last_player_id
