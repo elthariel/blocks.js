@@ -1,7 +1,7 @@
 require! './consts.ls'
 
 class Pos
-  @size = CHUNK_SIZE
+  @size = consts.CHUNK_SIZE
   (@x, @y, @z) ->
 
   toString: ->

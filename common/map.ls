@@ -1,3 +1,7 @@
+require! {
+  \./pos
+}
+
 class Map
   chunks: {}
 
@@ -19,4 +23,4 @@ class Map
           iter = pos.chunk_id(x, y, z)
           f @chunk_by_id(iter)
 
-module.exports = Map
+module.exports = {Map}

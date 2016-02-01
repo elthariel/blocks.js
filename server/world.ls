@@ -1,22 +1,18 @@
 
 require! {
-  \./map.ls
-  \./player.ls
-  \../common/pos.ls
+  \./map
+  \./player
+  \../common : {pos}
 }
 
-# HasEvents = require('./has_events')
-
-class World #implements HasEvents
+class World
   map: new map.Map
   last_player_id: 0
   players: {}
 
   ->
-    #@map.each_chunks_in_radius pos.chunk_id(0,0,0), 2, (c) ->
-    #console.log '------------------==========================='
-    #@map.each_chunks_in_radius pos.chunk_id(0,0,0), 2, (c) ->
-      #console.log c.blocks
+    @map.each_chunks_in_radius pos.chunk_id(0,0,0), 1, (c) ->
+      console.log 'Chunk :', c.blocks
 
   on_new_connection: (socket) ->
     incoming = new player.IncomingPlayer @, socket, @last_player_id

@@ -1,7 +1,7 @@
 require! {
-  \./has_events.ls : HasEvents
+  \./mixins/has_events.ls : HasEvents
 }
 
 class Player implements HasEvents
 
-module.exports = Player
+module.exports = {Player}

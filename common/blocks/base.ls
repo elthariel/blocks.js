@@ -35,13 +35,12 @@ class Base
   fromJSON: (o) ->
 
   toJSON: ->
-    id: @id()
+    id: @id!
 
   ###############################################
   #### Meshes
 
-  @create_mesh = ->
-    throw new Exception('Implement mesh creation')
+  @create_mesh = -> ...
 
   @create_instance = ->
     unless @_mesh?

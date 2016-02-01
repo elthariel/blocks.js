@@ -1,24 +1,25 @@
-
 require! {
   # The magic module
-  \.consts
+  \./consts
 
   # Submodules
   \./mixins
 
   # Classes
-  \.block
-  \.chunk
-  \.map
-  \.player
-  \.pos
+  \./blocks
+  \./chunk
+  \./map
+  \./player
+  \./pos
 }
 
+
 module.exports = {
-  mixins,
-  blocks.Block,
-  chunk.Chunk,
-  map.Map,
+  mixins
+  BlockBase: blocks.Base
+  blocks
+  chunk.Chunk
+  map.Map
   player.Player
-  pos,
+  pos
 }

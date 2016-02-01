@@ -1,25 +1,19 @@
+
 require! {
-  \./consts.ls
-  \./Block
+  './consts'
+  './blocks'
   ndarray
 }
 
 class Chunk
-  const @size = CHUNK_SIZE
+  const @size = consts.CHUNK_SIZE
 
   ->
-    @blocks = ndarray new Array(@@size ** 3), [@@size, @@size, @@size]
-
-    # Let's get rid of this pretty soon ;)
-    @fill_from_bitmap do ~>
-      for x til @@size
-        for y til @@size
-          for z til @@size
-            0
+    @blocks = ndarray(new Array(@@size ** 3), [@@size, @@size, @@size])
 
   fill_from_bitmap: (bitmap) ->
     @map (x, y, z, block) ->
-      new (Block.registry![bitmap[x][y][z]]) x, y, z
+      new (blocks.Base.registry![bitmap[x][y][z]]) x, y, z
 
   get: (x, y, z) ->
     @blocks.get x, y, z
@@ -53,4 +47,4 @@ class Chunk
     @map (x, y, z) ->
       Block.fromJSON(json[x][y][z])
 
-module.exports = Chunk
+module.exports = {Chunk}
