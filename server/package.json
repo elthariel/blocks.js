@@ -9,11 +9,15 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "chai": "^3.5.0",
     "express": "^4.13.4",
+    "ndarray": "^1.0.18",
     "prelude-ls": "^1.1.2",
     "reload": "^0.7.0",
+    "save-pixels": "^2.3.0",
     "socket.io": "^1.4.4",
-    "socketio-wildcard": "^0.3.0"
+    "tmp": "0.0.28",
+    "zeros": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^13.0.0",

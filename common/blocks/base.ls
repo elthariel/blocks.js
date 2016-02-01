@@ -1,10 +1,13 @@
-class Block
+class Base
   block_registry = []
 
   ->
     @deported_ctor ...
 
   deported_ctor: ->
+
+  ###############################################
+  #### Block Registry
 
   @register = (id) ->
     @::id = ->
@@ -20,6 +23,9 @@ class Block
   @registry = ->
     block_registry
 
+  ###############################################
+  #### Serialization
+
   @fromJSON = (o) ->
     klass = @registry()[o.id]
     block = new klass
@@ -29,18 +35,17 @@ class Block
   fromJSON: (o) ->
 
   toJSON: ->
-    id: @id()
+    id: @id!
 
-  stackable: true
-  stack_size: 64
+  ###############################################
+  #### Meshes
 
-class Block.Nil extends Block
-  @register 0
+  @create_mesh = -> ...
 
-class Block.Air extends Block
-  @register 1
+  @create_instance = ->
+    unless @_mesh?
+      @_mesh = @create_mesh!
+      @_mesh_instance_count = 0
+    @_mesh.createInstance("#{@_mesh.name}:#{@_mesh_instance_count++}")
 
-class Block.Ground extends Block
-  @register 2
-
-module.exports = Block
+module.exports = {Base}
