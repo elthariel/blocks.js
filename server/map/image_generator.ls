@@ -1,5 +1,3 @@
-global import require \prelude-ls
-
 require! {
   ndarray
   \./seed : {Seed}
@@ -65,12 +63,12 @@ img_to_png = (img) ->
   save_pixels(img, "png").pipe(process.stdout)
 
 module.exports = {
-  Generator,
-  PerlinGenerator,
-  SimplexGenerator,
+  Generator
+  PerlinGenerator
+  SimplexGenerator
   NoiseGenerator
-  ValueMapper,
-  ValueCombiner,
+  ValueMapper
+  ValueCombiner
   img_to_png
 }
 

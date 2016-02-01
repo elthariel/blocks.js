@@ -16,7 +16,6 @@ require! {
 
 module.exports = {
   mixins
-  BlockBase: blocks.Base
   blocks
   chunk.Chunk
   map.Map
