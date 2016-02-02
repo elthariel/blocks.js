@@ -5,26 +5,27 @@ export class DSL
 
   mesh: (id, fun) ->
     console.log "Registering mesh #{id}"
-    @tree.meshes[id] = new MeshNode(id)
-    fun.apply(@tree.meshes[id])
+    node = new MeshNode(id)
+    fun.apply(node)
+    @tree.meshes[id] = node.data
+
 
 class BaseNode
   ->
+    @data = {}
     if @@_defaults?
-      @ <<< @@_defaults
+      @data <<< @@_defaults
 
   @_defaults = {}
   @keyword = (name, default_value) ->
-    attr_name = "_#{name}"
-
-    @_defaults[attr_name] = default_value
+    @_defaults[name] = default_value
 
     @.prototype[name] = (value) ->
-      @[attr_name] = value
+      @data[attr_name] = value
 
 class MeshNode extends BaseNode
   @keyword 'name'
   @keyword 'air', false
-  @keyword 'model', false
+  @keyword 'model', 'cube'
   @keyword 'texture', 'blocks/bedrock.png'
-  @keyword 'alpha', false
+  @keyword 'alpha'
