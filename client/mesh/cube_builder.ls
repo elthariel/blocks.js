@@ -15,9 +15,13 @@ export cube_builder = (scene, data) ->
   box.isVisible = false
   material = new bjs.StandardMaterial("#{data.name}_material", scene)
   # material.diffuseColor = new BABYLON.Color3 0 0 0
-  # material.specularColor = new BABYLON.Color3 0 0 0
-  # material.ambientColor = new BABYLON.Color3 1 1 1
+  material.specularColor = new BABYLON.Color3 0 0 0
+  material.ambientColor = new BABYLON.Color3 1 1 1
+  material.disableLighting = true
+  # bjs.StandardMaterial.DiffuseTextureEnabled = false
   box.material = material
+
+
 
   if data.color?
     material.diffuseColor = helpers.color(data.color)
