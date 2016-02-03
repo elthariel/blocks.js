@@ -28,4 +28,6 @@ class MeshNode extends BaseNode
   @keyword 'air', false
   @keyword 'model', 'cube'
   @keyword 'texture', 'blocks/bedrock.png'
+  @keyword 'texture_repeat'
+  @keyword 'color'
   @keyword 'alpha'

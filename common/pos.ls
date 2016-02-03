@@ -24,8 +24,8 @@ class WorldPos extends Pos
   to_chunk: ->
     cid = new ChunkPos Math.floor(@x / @@size),
       Math.floor(@y / @@size),
-      Math.floor(@y / @@size)
-    cpos = new ChunkId(@x %% @@size, @y %% @@size, @y %% @@size)
+      Math.floor(@z / @@size)
+    cpos = new ChunkId(@x %% @@size, @y %% @@size, @z %% @@size)
     return [cid, cpos]
 
   in_chunk_radius: (other_pos, chunk_radius) ->

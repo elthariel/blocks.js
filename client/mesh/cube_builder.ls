@@ -1,5 +1,9 @@
+require! {
+  './helpers'
+}
 
-console.log bjs
+# bjs.CubeTexture.prototype.getTextureMatrix = ->
+#  @_textureMatrix
 
 export cube_builder = (scene, data) ->
   opts =
@@ -15,11 +19,23 @@ export cube_builder = (scene, data) ->
   # material.ambientColor = new BABYLON.Color3 1 1 1
   box.material = material
 
+  if data.color?
+    material.diffuseColor = helpers.color(data.color)
+
   if data.alpha
    material.alpha = data.alpha
 
   if data.texture?
-    tex = new bjs.Texture('textures/' + data.texture, scene)
-    material.diffuseTexture = tex
+    tex = null
+    if data.texture instanceof Array
+      tex = new bjs.CubeTexture('textures/', scene, data.texture, true)
+      tex.coordinatesMode = bjs.Texture.PLANAR_MODE
+      material.diffuseTexture = tex
+    else
+      tex = new bjs.Texture('textures/' + data.texture, scene)
+
+      if data.texture_repeat?
+        tex.uScale = tex.vScale = data.texture_repeat
+      material.diffuseTexture = tex
 
   box
