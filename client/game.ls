@@ -4,7 +4,6 @@ require! {
   './camera' : {Camera}
   './chunk_loader' : {ChunkLoader}
   './mesh/manager' : {Manager}
-  './mesh/manager' : {Manager}
   './player' : {Player}
 }
 
@@ -60,6 +59,8 @@ export class Game
       # ..collisionsEnabled = true
       ..debugLayer.show!
 
+    Manager.scene @scene
+
     #FIXME
     common.blocks.Base.initialize @scene
 
@@ -79,15 +80,9 @@ export class Game
       ..on_pos_change @loader~on_pos_change
 
     @player               = new Player @scene, @socket, @camera
-
-    # Manager.scene(@scene)
-    # i = Manager.instance(3, 'test')
-    # i.visible = true
-    # i.position = bjs.Vector3.Zero!
-    # console.log i
     @engine.runRenderLoop @scene~render
 
     # @manage_lock!
 
-    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
+    bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
     # @engine.isPointerLock = true
