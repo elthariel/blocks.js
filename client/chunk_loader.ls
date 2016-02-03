@@ -13,11 +13,12 @@ export class ChunkLoader implements common.mixins.HasEvents
 
   on_chunk: (msg) ->
     cid = common.pos.chunk_id(msg.pos)
-    console.log "Received chunk: ", cid
+    console.log "Received chunk: ", msg
     @map.set cid, Chunk.fromJSON(msg.chunk)
     @chunk_loading[cid] = false
 
   on_pos_change: (pos) ->
+    console.log "LOL" pos
     [cid, _] = pos.to_chunk!
     unless @map.contains(cid) || @chunk_loading[cid]
       console.log 'Requesting chunk: ', cid

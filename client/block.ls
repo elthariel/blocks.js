@@ -1,6 +1,5 @@
 require! {
   \../common
-  \./scene
 }
 
 meshNb = 1

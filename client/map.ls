@@ -4,8 +4,10 @@ require! {
 }
 
 export class Map extends common.Map
-  ->
+
+  (@scene, @socket) ->
 
   chunk_missing: ->
     console.log "Chunk #{it} is missing"
-    # @chunks[it] = new Chunk @scene
+    console.log @
+    @chunks[it] = new Chunk @scene

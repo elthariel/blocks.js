@@ -12,6 +12,7 @@ export class Camera extends bjs.FreeCamera
 
   _updatePosition: ->
     old_wpos = common.pos.world_pos_from_camera_pos @position
+    console.log 'NEW POS2' new_wpos
     super ...
     new_wpos = common.pos.world_pos_from_camera_pos @position
 
