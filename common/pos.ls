@@ -1,5 +1,3 @@
-require! './consts.ls'
-
 class Pos
   @size = consts.CHUNK_SIZE
   (@x, @y, @z) ->

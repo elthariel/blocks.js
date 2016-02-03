@@ -5,6 +5,7 @@ require! {
 
 # TODO: load more chunk and deload chunk as needed
 export class ChunkLoader implements common.mixins.HasEvents
+
   (@socket, @map, @pos) ->
     @chunk_loading = {}
     @register_socket @socket
@@ -13,9 +14,10 @@ export class ChunkLoader implements common.mixins.HasEvents
 
   on_chunk: (msg) ->
     cid = common.pos.chunk_id(msg.pos)
-    console.log "Received chunk: ", cid
-    @map.set cid, Chunk.fromJSON(msg.chunk)
+    console.log "Received chunk: ", msg
+    @map.set cid, chunk = Chunk.fromJSON(msg.chunk, @map.scene)
     @chunk_loading[cid] = false
+    chunk.show_near_air cid
 
   on_pos_change: (pos) ->
     [cid, _] = pos.to_chunk!
