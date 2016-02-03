@@ -24,7 +24,7 @@ class ManagerClass
     m = @mesh(id)
     if m?
       i = m.createInstance(name)
-      i.visible = true
+      i.isVisible = true
       i
 
   add_meshes: (id, fun) ->
