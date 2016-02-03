@@ -15,11 +15,6 @@ class Map extends common.Map
     common.log_time "Generation of chunk #{cid} took", ~>
       console.log "Generating chunk #{cid}"
       chunk = @generator.generate_chunk(cid)
-      @each_chunk (id, c) ->
-        if chunk.eq(c)
-          console.log 'Moui grosse problem'
-        else
-          console.log 'different'
       @set cid, chunk
 
 

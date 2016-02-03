@@ -54,9 +54,9 @@ export class Game
 
 
     @scene                = new bjs.Scene @engine
-
-      # ..gravity           = new BABYLON.Vector3 0 -9.81 0
-      # ..collisionsEnabled = true
+      ..gravity           = new BABYLON.Vector3 0 -1 0
+      ..collisionsEnabled = true
+      # ..workerCollisions  = true
       ..debugLayer.show!
 
     Manager.scene @scene
@@ -68,7 +68,7 @@ export class Game
     @camera               = new Camera 'camera1', new bjs.Vector3(@pos.x, @pos.y, @pos.z), @scene
       # ..applyGravity      = true
       # ..checkCollisions   = true
-      ..setTarget bjs.Vector3.Zero!
+      ..setTarget new bjs.Vector3(@pos.x, pos.y, pos.z + 1)
       ..attachControl @canvas, false
       ..keysUp            = [87]
       ..keysDown          = [83]

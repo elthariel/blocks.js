@@ -6,7 +6,8 @@ export class Camera extends bjs.FreeCamera
   ->
     super ...
     @checkCollisions = true
-    #@applyGravity = true
+    @applyGravity = true
+    @ellipsoid = new BABYLON.Vector3(1, 2, 1);    
 
   on_pos_change: (@_pos_change) ->
 

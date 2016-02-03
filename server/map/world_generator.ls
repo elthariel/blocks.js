@@ -15,7 +15,7 @@ class WorldGenerator
       new img.SimplexGenerator(@seed, 600, 600)
     ], (*))
     @heightmap = new img.ValueMapper @seed, height_norm, (v) ->
-      (v * 0.5 + 0.3) * 64
+      (v * 0.5 + 0.2) * 32
 
   generate_chunk: (cid) ->
     common.pos.ensure_cid cid
@@ -28,11 +28,11 @@ class WorldGenerator
 
       if wpos.y > height
         if wpos.y > 0
-          new common.blocks.Air
+          new common.blocks.basic.Air
         else
-          new common.blocks.StillWater
+          new common.blocks.basic.StillWater
       else
-        new common.blocks.Dirt
+        new common.blocks.basic.Dirt
     c
 
 module.exports = {WorldGenerator}

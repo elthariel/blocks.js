@@ -20,10 +20,14 @@ class ManagerClass
       @_meshes[id] = @generate_mesh id
     @_meshes[id]
 
+  mesh_data: (id) ->
+    @_mesh_data[id]
+
   instance: (id, name) ->
     m = @mesh(id)
     if m?
       i = m.createInstance(name)
+      console.log 'mesh id', id
       i.isVisible = true
       i
 

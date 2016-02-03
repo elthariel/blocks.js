@@ -22,7 +22,8 @@ export cube_builder = (scene, data) ->
   # bjs.StandardMaterial.DiffuseTextureEnabled = false
   box.material = material
 
-
+  # if data.air
+  #   box.checkCollisions = true
 
   if data.color?
     material.diffuseColor = helpers.color(data.color)
