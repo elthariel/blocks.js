@@ -9,6 +9,7 @@
   "author": "",
   "license": "GPL-2.0",
   "dependencies": {
+    "chai": "^3.5.0",
     "ndarray": "^1.0.18"
   }
 }

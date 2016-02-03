@@ -18,10 +18,12 @@ export class ChunkLoader implements common.mixins.HasEvents
     @map.set cid, chunk = Chunk.fromJSON(msg.chunk, @map.scene)
     @chunk_loading[cid] = false
     chunk.show_near_air cid
+    console.log 'show near cid', cid.toString()
 
   on_pos_change: (pos) ->
     [cid, _] = pos.to_chunk!
+    common.pos.ensure_cid cid
     unless @map.contains(cid) || @chunk_loading[cid]
-      console.log 'Requesting chunk: ', cid
+      console.log 'Requesting chunk: ', cid.toString()
       @chunk_loading[cid] = true
       @socket.emit 'get_chunk', cid

@@ -61,9 +61,6 @@ export class Game
 
     Manager.scene @scene
 
-    #FIXME
-    common.blocks.Base.initialize @scene
-
     @map                  = new Map @scene, @socket
     light                 = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
     @loader               = new ChunkLoader @socket, @map, @pos

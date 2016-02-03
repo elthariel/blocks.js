@@ -10,6 +10,7 @@ export cube_builder = (scene, data) ->
     width: 1
     height:1
     depth: 1
+    updatable: false
 
   box = bjs.Mesh.CreateBox(data.name, opts, scene)
   box.isVisible = false

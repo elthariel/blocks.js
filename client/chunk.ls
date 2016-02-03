@@ -11,6 +11,7 @@ export class Chunk extends common.Chunk
     @scene.createOrUpdateSelectionOctree!
 
   show_near_air: (cid) ->
+    common.pos.ensure_cid cid
     @each (x, y, z, block) ~>
       if block.id! isnt 1
         airs = filter (.id! is 1), @get_adjacent_blocks x, y, z

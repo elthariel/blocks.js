@@ -12,10 +12,9 @@ class IncomingPlayer
 
 class Player extends common.Player
   (@world, socket, @id, @name) ->
-    console.log \Player @
     @register_socket socket
     @events \move, \get_chunk
-    @pos = pos.world_pos(0, 50, 0)
+    @pos = pos.world_pos(0, 0, -1)
     @emit 'welcome', @pos
 
   emit_to_all: (type, msg) ->

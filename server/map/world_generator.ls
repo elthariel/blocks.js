@@ -18,17 +18,19 @@ class WorldGenerator
       (v * 0.5 + 0.3) * 64
 
   generate_chunk: (cid) ->
+    common.pos.ensure_cid cid
     c = new Chunk
+    console.log 'cid', cid
     c.map (x, y, z) ~>
       cpos = common.pos.chunk_pos(x, y, z)
       wpos = cpos.to_world(cid)
       height = @heightmap.point(wpos.x, wpos.z)
 
-      if y > height
-        if y >= 0
+      if wpos.y > height
+        if wpos.y > 0
           new common.blocks.Air
         else
-          new common.blocks.Water
+          new common.blocks.StillWater
       else
         new common.blocks.Dirt
     c
