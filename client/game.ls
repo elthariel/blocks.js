@@ -5,8 +5,9 @@ require! {
   './camera' : {Camera}
   './chunk_loader' : {ChunkLoader}
   './mesh/manager' : {Manager}
+  './mesh/manager' : {Manager}
+  './player' : {Player}
 }
-
 
 export class Game
 
@@ -31,7 +32,7 @@ export class Game
       ..debugLayer.show!
 
     #FIXME
-    BlockCommon.Base.initialize @scene
+    common.blocks.Base.initialize @scene
 
     light                 = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 
