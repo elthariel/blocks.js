@@ -2,15 +2,8 @@ require! {
   fs
   path
   './dsl' : {DSL}
+  './cube_builder' : {cube_builder}
 }
-
-# We force the path to be included by browserify by requiring
-# all the builders. Is it necessary ?
-# Also, let's replace this hack with a module or something
-for path in fs.readdirSync(__dirname)
-  fname = path.basename(path)
-  if fname.match(/\w+_builder/)
-    require path
 
 class ManagerClass
   ->
@@ -40,10 +33,10 @@ class ManagerClass
 
   generate_mesh: (id) ->
     data = @_mesh_data[id]
-    builder_name = "#{data.model}_builder"
-    builder = require("./#{builder_name}")[builder_name]
-    builder(@scene, data)
-
+    if data.model == 'cube'
+      cube_builder @_scene, data
+    else
+      ...
 
 export Manager = new ManagerClass
 
@@ -52,3 +45,5 @@ Manager.add_meshes 'nil', ->
     @name 'Nil'
     @air true
     @texture 'blocks/bedrock.png'
+
+require! './data'

@@ -4,6 +4,7 @@ require! {
   './map' : {Map}
   './camera' : {Camera}
   './chunk_loader' : {ChunkLoader}
+  './mesh/manager' : {Manager}
 }
 
 export class Game
@@ -31,10 +32,14 @@ export class Game
     camera.setTarget bjs.Vector3.Zero!
     camera.attachControl @canvas, false
 
+    Manager.scene(@scene)
+    i = Manager.instance(0, 'test')
+    i.position = bjs.Vector3(0, 0, 0)
+
     @loader = new ChunkLoader @socket, @map, @pos
     camera.on_pos_change @loader~on_pos_change
 
     light = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 
-    @scene.createOrUpdateSelectionOctree();
+    #@scene.createOrUpdateSelectionOctree();
     @engine.runRenderLoop @scene~render

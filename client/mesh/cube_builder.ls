@@ -1,9 +1,12 @@
 
-export cube_builder = (scene, data) ->
-  opts =
-    size: 1
+console.log bjs
 
-  box = bjs.MeshBuilder.CreateBox(data.name, opts, scene)
+export cube_builder = (scene, data) ->
+  opts = {size: 1}
+
+  box = bjs.Mesh.CreateBox(data.name, {size: 1}, scene)
+  box.position = bjs.Vector3.Zero!
+  box.visible = false
   material = new bjs.StandardMaterial("#{data.name}_material", scene)
   box.material = material
 

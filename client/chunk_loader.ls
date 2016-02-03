@@ -3,7 +3,7 @@ require! {
   './chunk' : {Chunk}
 }
 
-# TODO: load more chunk and deload chunk
+# TODO: load more chunk and deload chunk as needed
 export class ChunkLoader implements common.mixins.HasEvents
   (@socket, @map, @pos) ->
     @chunk_loading = {}

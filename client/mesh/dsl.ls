@@ -21,7 +21,7 @@ class BaseNode
     @_defaults[name] = default_value
 
     @.prototype[name] = (value) ->
-      @data[attr_name] = value
+      @data[name] = value
 
 class MeshNode extends BaseNode
   @keyword 'name'
