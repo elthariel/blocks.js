@@ -23,12 +23,12 @@ export class Chunk extends common.Chunk
   get_adjacent_blocks: (x, y, z) ->
 
     res =
-      * @get(x + 1, y, z) if 0 < x + 1 < consts.CHUNK_SIZE
-      * @get(x, y + 1, z) if 0 < y + 1 < consts.CHUNK_SIZE
-      * @get(x, y, z + 1) if 0 < z + 1 < consts.CHUNK_SIZE
-      * @get(x - 1, y, z) if 0 < x - 1 < consts.CHUNK_SIZE
-      * @get(x, y - 1, z) if 0 < y - 1 < consts.CHUNK_SIZE
-      * @get(x, y, z - 1) if 0 < z - 1 < consts.CHUNK_SIZE
+      * @get(x + 1, y, z) if 0 <= x + 1 < consts.CHUNK_SIZE
+      * @get(x, y + 1, z) if 0 <= y + 1 < consts.CHUNK_SIZE
+      * @get(x, y, z + 1) if 0 <= z + 1 < consts.CHUNK_SIZE
+      * @get(x - 1, y, z) if 0 <= x - 1 < consts.CHUNK_SIZE
+      * @get(x, y - 1, z) if 0 <= y - 1 < consts.CHUNK_SIZE
+      * @get(x, y, z - 1) if 0 <= z - 1 < consts.CHUNK_SIZE
 
     compact res
 
