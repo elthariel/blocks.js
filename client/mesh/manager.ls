@@ -23,7 +23,9 @@ class ManagerClass
   instance: (id, name) ->
     m = @mesh(id)
     if m?
-      m.createInstance(name)
+      i = m.createInstance(name)
+      i.visible = true
+      i
 
   add_meshes: (id, fun) ->
     console.log "Loading mesh group '#{id}'"

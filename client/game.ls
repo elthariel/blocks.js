@@ -28,16 +28,20 @@ export class Game
     # @light = new Light
     @map = new Map
     # @player = new Player pos
-    camera = new Camera 'camera1', new bjs.Vector3(0, 5, 5), @scene
+    camera = new Camera 'camera1', new bjs.Vector3(0, 0, -5), @scene
     camera.setTarget bjs.Vector3.Zero!
     camera.attachControl @canvas, false
 
-    Manager.scene(@scene)
-    i = Manager.instance(0, 'test')
-    i.position = bjs.Vector3(0, 0, 0)
+    # Manager.scene(@scene)
+    # i = Manager.instance(3, 'test')
+    # i.visible = true
+    # i.position = bjs.Vector3.Zero!
+    # console.log i
 
     @loader = new ChunkLoader @socket, @map, @pos
     camera.on_pos_change @loader~on_pos_change
+
+    @scene.debugLayer.show()
 
     light = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 
