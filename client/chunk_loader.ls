@@ -20,7 +20,6 @@ export class ChunkLoader implements common.mixins.HasEvents
     chunk.show_near_air cid
 
   on_pos_change: (pos) ->
-    console.log "LOL" pos
     [cid, _] = pos.to_chunk!
     unless @map.contains(cid) || @chunk_loading[cid]
       console.log 'Requesting chunk: ', cid

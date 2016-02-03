@@ -21,27 +21,29 @@ export class Game
       @socket.once \welcome @~start
       @socket.emit \hello @login
 
-  have_pointer_lock: ->
-    'pointerLockElement' in @canvas ||
-    'mozPointerLockElement' in @canvas ||
-    'webkitPointerLockElement' in @canvas
+  ### Dont work:
 
-  manage_lock: ->
-    @canvas.onclick = ~>
-      if @have_pointer_lock!
-        @canvas.requestPointerLock = @canvas.requestPointerLock ||
-                                     @canvas.mozRequestPointerLock ||
-                                     @canvas.webkitRequestPointerLock
-
-        @canvas.requestPointerLock()
-
-        lockError = console~error
-
-        document.addEventListener('pointerlockerror', lockError, false);
-        document.addEventListener('mozpointerlockerror', lockError, false);
-        document.addEventListener('webkitpointerlockerror', lockError, false);
-      else
-        console.log 'Pas de pointerlock'
+  # have_pointer_lock: ->
+  #   'pointerLockElement' in @canvas ||
+  #   'mozPointerLockElement' in @canvas ||
+  #   'webkitPointerLockElement' in @canvas
+  #
+  # manage_lock: ->
+  #   @canvas.onclick = ~>
+  #     if @have_pointer_lock!
+  #       @canvas.requestPointerLock = @canvas.requestPointerLock ||
+  #                                    @canvas.mozRequestPointerLock ||
+  #                                    @canvas.webkitRequestPointerLock
+  #
+  #       @canvas.requestPointerLock()
+  #
+  #       lockError = console~error
+  #
+  #       document.addEventListener('pointerlockerror', lockError, false);
+  #       document.addEventListener('mozpointerlockerror', lockError, false);
+  #       document.addEventListener('webkitpointerlockerror', lockError, false);
+  #     else
+  #       console.log 'Pas de pointerlock'
 
   start: (pos) ->
     @pos                  = common.pos.world_pos(pos.x, pos.y, pos.z)
@@ -77,11 +79,9 @@ export class Game
       ..on_pos_change @loader~on_pos_change
 
     @player               = new Player @scene, @socket, @camera
-
-
     @engine.runRenderLoop @scene~render
 
-    @manage_lock!
+    # @manage_lock!
 
     # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
     # @engine.isPointerLock = true

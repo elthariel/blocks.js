@@ -19,7 +19,6 @@ export class Chunk extends common.Chunk
           |> each ->
             instance = Manager.instance it.block.id, common.pos.chunk_pos x, y, z
             instance.position = it.pos.to_world cid
-            instance.isVisible = true
 
   get_adjacent_blocks: (x, y, z) ->
     res =
