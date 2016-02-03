@@ -1,6 +1,5 @@
 
-HasEvents =
-  # register_socket: (.on \* @~_on_event)
+export HasEvents =
   register_socket: (socket) ->
     @_socket = socket
 
@@ -11,7 +10,7 @@ HasEvents =
         @_on_event name, msg
 
   _on_event: (type, msg) ->
-    console.log type, msg
+    # console.log type, msg
     handler_name = "on_#{type}"
     if @[handler_name]?
        @[handler_name] msg
@@ -24,5 +23,3 @@ HasEvents =
 
   once: (type, fun) ->
     @_socket.once type, fun
-
-module.exports = HasEvents

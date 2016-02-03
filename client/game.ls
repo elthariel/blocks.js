@@ -1,12 +1,12 @@
-# require! <[ ./Map ./Player ]>
 require! {
-  \./scene
-  \./Map
+  '../common'
+  './scene'
+  './map' : {Map}
+  './camera' : {Camera}
+  './chunk_loader' : {ChunkLoader}
 }
 
-
-class Game
-
+export class Game
   login: \champii
 
   ->
@@ -15,10 +15,11 @@ class Game
 
   handshake: ->
     @socket.on \hello ~>
-      @socket.once \welcome @~start
+      @socket.once \welcome, @~start
       @socket.emit \hello @login
 
   start: (pos) ->
+    @pos = common.pos.world_pos(pos.x, pos.y, pos.z)
     @canvas = document.getElementById \renderCanvas
     @engine = new bjs.Engine @canvas
     @scene = scene @engine
@@ -26,16 +27,14 @@ class Game
     # @light = new Light
     @map = new Map
     # @player = new Player pos
-    camera = new bjs.FreeCamera 'camera1', new bjs.Vector3(0, 5,-10), @scene
-
+    camera = new Camera 'camera1', new bjs.Vector3(0, 5, 5), @scene
     camera.setTarget bjs.Vector3.Zero!
-
     camera.attachControl @canvas, false
+
+    @loader = new ChunkLoader @socket, @map, @pos
+    camera.on_pos_change @loader~on_pos_change
 
     light = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 
-    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
     @scene.createOrUpdateSelectionOctree();
     @engine.runRenderLoop @scene~render
-
-module.exports = new Game
