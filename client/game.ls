@@ -79,6 +79,12 @@ export class Game
       ..on_pos_change @loader~on_pos_change
 
     @player               = new Player @scene, @socket, @camera
+
+    # Manager.scene(@scene)
+    # i = Manager.instance(3, 'test')
+    # i.visible = true
+    # i.position = bjs.Vector3.Zero!
+    # console.log i
     @engine.runRenderLoop @scene~render
 
     # @manage_lock!

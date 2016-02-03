@@ -1,40 +1,40 @@
 require! \./base : {Base}
 
-class Nil extends Base
+export class Nil extends Base
   @register 0
 
-class Air extends Base
+export class Air extends Base
   @register 1
 
-class Water extends Base
+export class Stone extends Base
   @register 2
 
-class Dirt extends Base
+export class Grass extends Base
   @register 3
 
-class Cobblestone extends Base
+export class Dirt extends Base
   @register 4
 
-class Sand extends Base
+export class CobbleStone extends Base
   @register 5
 
-class Gravel extends Base
+export class FlowingWater extends Base
   @register 6
 
-class Coal extends Base
+export class StillWater extends Base
   @register 7
 
-class Iron extends Base
+export class FlowingLava extends Base
   @register 8
 
-module.exports = {
-  Nil
-  Air
-  Water
-  Dirt
-  Cobblestone
-  Sand
-  Gravel
-  Coal
-  Iron
-}
+export class StillLava extends Base
+  @register 9
+
+export class Sand extends Base
+  @register 10
+
+export class Gravel extends Base
+  @register 11
+
+export class Glass extends Base
+  @register 21
