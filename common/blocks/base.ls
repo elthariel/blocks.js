@@ -1,4 +1,4 @@
-class Block
+class Base
   block_registry = []
 
   (x, y, z) ->
@@ -7,6 +7,9 @@ class Block
   initialize: ->
 
   @initialize = ->
+
+  ###############################################
+  #### Block Registry
 
   @register = (id) ->
     @::id = ->
@@ -22,6 +25,9 @@ class Block
   @registry = ->
     block_registry
 
+  ###############################################
+  #### Serialization
+
   @fromJSON = (o) ->
     klass = @registry()[o.id]
     block = new klass
@@ -31,22 +37,17 @@ class Block
   fromJSON: (o) ->
 
   toJSON: ->
-    id: @id()
+    id: @id!
 
-  stackable: true
-  stack_size: 64
+  ###############################################
+  #### Meshes
 
-Blocks_ = {}
+  @create_mesh = -> ...
 
-class Blocks_.Nil extends Block
-  @register 0
+  @create_instance = ->
+    unless @_mesh?
+      @_mesh = @create_mesh!
+      @_mesh_instance_count = 0
+    @_mesh.createInstance("#{@_mesh.name}:#{@_mesh_instance_count++}")
 
-class Blocks_.Air extends Block
-  @register 1
-
-class Blocks_.Ground extends Block
-  @register 2
-
-Block <<< Blocks_
-
-module.exports = Block
+module.exports = {Base}

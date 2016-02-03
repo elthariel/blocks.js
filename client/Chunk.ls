@@ -1,5 +1,5 @@
 require! {
-  \../common/Chunk : ChunkCommon
+  \../common/chunk : ChunkCommon
   \./Block
   # \./scene
 }

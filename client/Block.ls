@@ -1,5 +1,5 @@
 require! {
-  \../common/Block : BlockCommon
+  \../common/blocks : BlockCommon
   # \./HasMesh
   \./blocks_textures : textures
 }
@@ -7,7 +7,6 @@ require! {
 mesh = null
 
 createMesh = (name) ->
-
 
 redFaces = ->
   color = [0 0 0 1]
@@ -19,7 +18,7 @@ redFaces = ->
   for _, i in faceColors
     faceColors[i] = new bjs.Color4 color.0, color.1, color.2, 1
 
-BlockCommon::initialize = (x, y, z) ->
+BlockCommon.Base::initialize = (x, y, z) ->
   console.log 'TAMERE' @
   @instance = @@@mesh.createInstance \lol
   @instance.position <<< {x, y, z}
@@ -45,7 +44,7 @@ create_mesh = (scene, block) -->
   block.mesh = mesh
 
 
-BlockCommon.initialize = (@scene) ->
+BlockCommon.Base.initialize = (@scene) ->
   console.log 'trolilol' @
   each (create_mesh @scene), @registry!
 
@@ -58,4 +57,4 @@ BlockCommon.initialize = (@scene) ->
 #   super ...
 #   @mesh.isVisible = true
 
-module.exports = BlockCommon
+module.exports = BlockCommon.Base

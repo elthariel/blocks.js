@@ -1,8 +1,6 @@
-require! {
-  \../common/consts.ls
-  \../common/pos.ls
-  \../common/Player.ls : PlayerCommon
-}
+require! \../common
+
+pos = common.pos
 
 class IncomingPlayer
   (@world, @socket, @id) ->
@@ -12,7 +10,7 @@ class IncomingPlayer
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
 
-class Player extends PlayerCommon
+class Player extends common.Player
   (@world, socket, @id, @name) ->
     console.log \Player @
     @register_socket socket

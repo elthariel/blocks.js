@@ -2,7 +2,7 @@
 require! {
   # \./scene
   \./Map
-  \../common/Block : BlockCommon
+  \../common/blocks : BlockCommon
   \./Player
 }
 
@@ -29,7 +29,7 @@ class Game
       ..debugLayer.show!
 
     #FIXME
-    BlockCommon.initialize @scene
+    BlockCommon.Base.initialize @scene
 
     light                 = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 

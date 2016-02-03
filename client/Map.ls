@@ -1,5 +1,5 @@
 require! {
-  \../common/Map : MapCommon
+  \../common/map : MapCommon
   \../common/pos
   \./Chunk
 }
