@@ -1,15 +1,14 @@
 require! {
-  \../common/chunk : ChunkCommon
-  \./Block
-  # \./scene
+  \../common
+  \./block
+  \./scene
 }
 
-class Chunk extends ChunkCommon
+export class Chunk extends common.Chunk
 
-  (@scene) ->
+  ->
     super!
-    scene.createOrUpdateSelectionOctree();
-    @show_near_air!
+    scene!createOrUpdateSelectionOctree();
 
   show_near_air: ->
     @each (x, y, z, block) ~>
@@ -17,5 +16,3 @@ class Chunk extends ChunkCommon
         @get_adjacent_blocks x, y, z
           |> filter (.id! isnt 1)
           |> each (.instance.isVisible = true)
-
-module.exports = Chunk

@@ -1,12 +1,14 @@
-# require! <[ ./Map ./Player ]>
 require! {
-  # \./scene
-  \./Map
-  \../common/blocks : BlockCommon
-  \./Player
+  '../common'
+  './scene'
+  './map' : {Map}
+  './camera' : {Camera}
+  './chunk_loader' : {ChunkLoader}
+  './mesh/manager' : {Manager}
 }
 
-class Game
+
+export class Game
 
   login: \champii
 
@@ -48,5 +50,3 @@ class Game
 
     @engine.runRenderLoop @scene~render
     # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
-
-module.exports = new Game

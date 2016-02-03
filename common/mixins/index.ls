@@ -2,5 +2,6 @@ require! {
   \./has_events
 }
 
-module.exports = 
+module.exports = {
   has_events.HasEvents
+}

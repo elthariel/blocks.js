@@ -1,3 +1,6 @@
+window <<< require 'prelude-ls'
 window.bjs = BABYLON
-window import require \prelude-ls
-require! \./Game
+require! './game' : {Game}
+
+console.log 'Starting Blocks...'
+new Game

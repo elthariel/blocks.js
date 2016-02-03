@@ -13,12 +13,19 @@ require! {
   \./pos
 }
 
+log_time = (msg, fun) ->
+  console.time(msg)
+  res = fun!
+  console.timeEnd(msg)
+  res
+
 
 module.exports = {
-  mixins
   blocks
   chunk.Chunk
+  log_time
   map.Map
+  mixins
   player.Player
   pos
 }
