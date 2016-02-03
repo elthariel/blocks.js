@@ -1,10 +1,12 @@
 class Base
   block_registry = []
 
-  ->
-    @deported_ctor ...
+  (x, y, z) ->
+    @initialize x, y, z
 
-  deported_ctor: ->
+  initialize: ->
+
+  @initialize = ->
 
   ###############################################
   #### Block Registry

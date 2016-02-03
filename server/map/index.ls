@@ -10,7 +10,8 @@ class Map extends common.Map
     @generator = new WorldGenerator(@seed)
 
   chunk_missing: (cid) ->
-    console.log "Generating a new chunk for id #{cid}"
-    @generator.generate_chunk(cid)
+    common.log_time "Generation of chunk #{cid} took", ~>
+      console.log "Generating chunk #{cid}"
+      @set cid, @generator.generate_chunk(cid)
 
 module.exports = {Map}

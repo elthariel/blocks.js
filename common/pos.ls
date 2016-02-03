@@ -10,6 +10,9 @@ class Pos
   eq: (other) ->
     @x == other.x && @y == other.y && @z == other.z
 
+  neq: (other) ->
+    @x != other.x || @y != other.y || @z != other.z
+
   update: (@x, @y, @z) ->
 
   in_radius: (other_pos, radius) ->
@@ -43,29 +46,26 @@ class ChunkPos extends Pos
       @y + @@size * cid.y,
       @z + @@size * cid.z)
 
-chunk_id = (x, y, z) ->
+export chunk_id = (x, y, z) ->
   if x.x?
     new ChunkId x.x, x.y, x.z
   else
     new ChunkId x, y, z
 
-world_pos = (x, y, z) ->
+export world_pos = (x, y, z) ->
   if x.x?
     new WorldPos x.x, x.y, x.z
   else
     new WorldPos x, y, z
 
-chunk_pos = (x, y, z) ->
+export chunk_pos = (x, y, z) ->
   if x.x?
     new ChunkPos x.x, x.y, x.z
   else
     new ChunkPos x, y, z
 
-module.exports = {chunk_id, world_pos, chunk_pos}
-
-# p1 = world_pos(0, 0, 0)
-# p2 = world_pos(32, 0, 0)
-# p3 = world_pos(96, 0, 0)
-# console.log p1.in_chunk_radius(p1, 2)
-# console.log p1.in_chunk_radius(p2, 2)
-# console.log p1.in_chunk_radius(p3, 2)
+export world_pos_from_camera_pos = (camera_pos) ->
+  x = Math.floor camera_pos.x
+  y = Math.floor camera_pos.y
+  z = Math.floor camera_pos.z
+  new WorldPos(x, y, z)
