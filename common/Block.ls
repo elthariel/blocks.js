@@ -1,10 +1,12 @@
 class Block
   block_registry = []
 
-  ->
-    @deported_ctor ...
+  (x, y, z) ->
+    @initialize x, y, z
 
-  deported_ctor: ->
+  initialize: ->
+
+  @initialize = ->
 
   @register = (id) ->
     @::id = ->
@@ -34,13 +36,17 @@ class Block
   stackable: true
   stack_size: 64
 
-class Block.Nil extends Block
+Blocks_ = {}
+
+class Blocks_.Nil extends Block
   @register 0
 
-class Block.Air extends Block
+class Blocks_.Air extends Block
   @register 1
 
-class Block.Ground extends Block
+class Blocks_.Ground extends Block
   @register 2
+
+Block <<< Blocks_
 
 module.exports = Block

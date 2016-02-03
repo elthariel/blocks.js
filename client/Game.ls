@@ -1,9 +1,10 @@
 # require! <[ ./Map ./Player ]>
 require! {
-  \./scene
+  # \./scene
   \./Map
+  \../common/Block : BlockCommon
+  \./Player
 }
-
 
 class Game
 
@@ -19,23 +20,33 @@ class Game
       @socket.emit \hello @login
 
   start: (pos) ->
-    @canvas = document.getElementById \renderCanvas
-    @engine = new bjs.Engine @canvas
-    @scene = scene @engine
-    # @camera = new Camera
-    # @light = new Light
-    @map = new Map
-    # @player = new Player pos
-    camera = new bjs.FreeCamera 'camera1', new bjs.Vector3(0, 5,-10), @scene
+    @canvas               = document.getElementById \renderCanvas
+    @engine               = new bjs.Engine @canvas
 
-    camera.setTarget bjs.Vector3.Zero!
+    @scene                = new bjs.Scene @engine
+      ..gravity           = new BABYLON.Vector3 0 -9.81 0
+      ..collisionsEnabled = true
+      ..debugLayer.show!
 
-    camera.attachControl @canvas, false
+    #FIXME
+    BlockCommon.initialize @scene
 
-    light = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
+    light                 = new bjs.HemisphericLight 'light1', new bjs.Vector3(0,1,0), @scene
 
-    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
-    @scene.createOrUpdateSelectionOctree();
+    @camera               = new bjs.FreeCamera 'camera1', new bjs.Vector3(pos.x, pos.y, pos.z), @scene
+      ..applyGravity      = true
+      ..checkCollisions   = true
+      ..setTarget bjs.Vector3.Zero!
+      ..attachControl @canvas, false
+      ..keysUp            = [87]
+      ..keysDown          = [83]
+      ..keysRight         = [68]
+      ..keysLeft          = [65]
+
+    @map                  = new Map @scene, @socket
+    @player               = new Player @scene, @socket, @camera
+
     @engine.runRenderLoop @scene~render
+    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
 
 module.exports = new Game

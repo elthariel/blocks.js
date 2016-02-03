@@ -1,11 +1,13 @@
 require! {
   \../common/Block : BlockCommon
   # \./HasMesh
-  \./scene
-
+  \./blocks_textures : textures
 }
 
-meshNb = 1
+mesh = null
+
+createMesh = (name) ->
+
 
 redFaces = ->
   color = [0 0 0 1]
@@ -17,16 +19,43 @@ redFaces = ->
   for _, i in faceColors
     faceColors[i] = new bjs.Color4 color.0, color.1, color.2, 1
 
-BlockCommon::deported_ctor = (x, y, z) ->
+BlockCommon::initialize = (x, y, z) ->
+  console.log 'TAMERE' @
+  @instance = @@@mesh.createInstance \lol
+  @instance.position <<< {x, y, z}
+  @instance.isVisible = false
+  @instance.checkCollisions = true;
+
+create_mesh = (scene, block) -->
+  meshNb = 1
   opts =
     width: 1
     height: 1
-    depth: 1,
-    # faceColors : redFaces!
-  @mesh = new bjs.Mesh.CreateBox "mesh#{meshNb++}" opts, scene!
+    depth: 1
 
-  @mesh.position <<< {x, y, z}
-  @mesh.faceColors = redFaces!
+  mesh = new bjs.Mesh.CreateBox block.DisplayName, opts, scene
+  mesh.position <<< {x: 0, y: 0, z: 0}
+  mesh.isVisible = false
+  # scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+  mesh.material = new BABYLON.StandardMaterial "material#{meshNb++}", scene
+  mesh.material.diffuseColor = new BABYLON.Color3 0 0 0
+  mesh.material.specularColor = new BABYLON.Color3 0 0 0
+  mesh.material.ambientColor = new BABYLON.Color3 1 1 1
+  mesh.material.diffuseTexture = new BABYLON.Texture \/textures/blocks/grass_side.png,  scene
+  block.mesh = mesh
 
+
+BlockCommon.initialize = (@scene) ->
+  console.log 'trolilol' @
+  each (create_mesh @scene), @registry!
+
+
+# BlockCommon.Air::deported_ctor = ->
+#   super ...
+#   @mesh.isVisible = false
+
+# BlockCommon.Ground::deported_ctor = ->
+#   super ...
+#   @mesh.isVisible = true
 
 module.exports = BlockCommon
