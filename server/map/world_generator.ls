@@ -15,17 +15,17 @@ class WorldGenerator
       new img.SimplexGenerator(@seed, 600, 600)
     ], (*))
     @heightmap = new img.ValueMapper @seed, height_norm, (v) ->
-      (v * 0.5 + 0.5) * 64
+      (v * 0.5 + 0.3) * 64
 
   generate_chunk: (cid) ->
     c = new Chunk
     c.map (x, y, z) ~>
       cpos = common.pos.chunk_pos(x, y, z)
       wpos = cpos.to_world(cid)
-      height = @heightmap.point(wpos.x, wpos.y)
+      height = @heightmap.point(wpos.x, wpos.z)
 
-      if z > height
-        if z >= 0
+      if y > height
+        if y >= 0
           new common.blocks.Air
         else
           new common.blocks.Water
