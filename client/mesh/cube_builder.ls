@@ -15,9 +15,10 @@ export cube_builder = (scene, data) ->
   box = bjs.Mesh.CreateBox(data.name, opts, scene)
   box.isVisible = false
   material = new bjs.StandardMaterial("#{data.name}_material", scene)
+  material.checkReadyOnlyOnce = true
   # material.diffuseColor = new BABYLON.Color3 0 0 0
   material.specularColor = new BABYLON.Color3 0 0 0
-  material.ambientColor = new BABYLON.Color3 1 1 1
+  #material.ambientColor = new BABYLON.Color3 1 1 1
   material.disableLighting = true
   # bjs.StandardMaterial.DiffuseTextureEnabled = false
   box.material = material
@@ -38,10 +39,11 @@ export cube_builder = (scene, data) ->
       tex.coordinatesMode = bjs.Texture.PLANAR_MODE
       material.diffuseTexture = tex
     else
-      tex = new bjs.Texture('textures/' + data.texture, scene)
+      tex = new bjs.Texture('textures/' + data.texture, scene, true, false,
+                            bjs.Texture.NEAREST_SAMPLINGMODE)
 
       if data.texture_repeat?
         tex.uScale = tex.vScale = data.texture_repeat
-      material.diffuseTexture = tex
+      material.ambientTexture = tex
 
   box

@@ -20,6 +20,7 @@ export class Chunk extends common.Chunk
           p = (chunkpos.to_world cid)
           instance.position = new bjs.Vector3 p.x, p.y, p.z
           instance.checkCollisions = true
+          instance.freezeWorldMatrix()
     @scene.createOrUpdateSelectionOctree!
 
   get_adjacent_blocks: (x, y, z) ->

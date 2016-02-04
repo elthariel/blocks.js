@@ -53,11 +53,19 @@ export class Game
     @engine               = new bjs.Engine @canvas
 
 
+    clear_color = new bjs.Color3(0.22, 0.6, 1.0)
     @scene                = new bjs.Scene @engine
-      ..gravity           = new BABYLON.Vector3 0 -1 0
+      ..clearColor        = clear_color
+      ..gravity           = new bjs.Vector3 0 -0.01 0
       ..collisionsEnabled = true
-      # ..workerCollisions  = true
       ..debugLayer.show!
+
+      ..fogEnabled        = true
+      ..fogMode           = bjs.Scene.FOGMODE_LINEAR
+      ..fogColor          = clear_color
+      ..fogDensity        = 0.2
+      ..fogStart          = 1.5 * 32
+      ..fogEnd            = 2 * 32
 
     Manager.scene @scene
 
@@ -81,5 +89,5 @@ export class Game
 
     # @manage_lock!
 
-    bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
+    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
     # @engine.isPointerLock = true
