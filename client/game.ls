@@ -1,4 +1,5 @@
 require! {
+  'events' : EventEmitter
   '../common'
   './map' : {Map}
   './camera' : {Camera}
@@ -7,11 +8,35 @@ require! {
   './player' : {Player}
 }
 
-export class Game
-
+export class Game extends EventEmitter
+  keys:
+    left: ['left', 'A']
+    right: ['right', 'D']
+    up: ['up', 'W']
+    down: ['down', 'S']
+    jump: ['space']
+  slowkeys:
+    grab_cursor: ['G']
+    fullscreen: ['F']
   login: \champii
+  options: {}
 
   ->
+    console.log  'Starting Blocks...'
+
+    @tick = 0
+    @shell = require('game-shell')(@options)
+    @shell.on 'init' @~on_init
+    @shell.on 'tick' @~on_tick
+
+  on_init: ->
+    console.log 'Game Shell initialized'
+    @canvas = document.createElement('canvas')
+    @canvas.style.width = '100%'
+    @canvas.style.height = '100%'
+    @shell.element.appendChild(@canvas)
+    @bind_keys!
+
     @socket = io!
     @handshake!
 
@@ -20,38 +45,40 @@ export class Game
       @socket.once \welcome @~start
       @socket.emit \hello @login
 
-  ### Dont work:
+  bind_keys: ->
+    for name, binding of @keys
+      @shell.bind.apply(@shell, [name].concat(binding))
+    for name, binding of @slowkeys
+      @shell.bind.apply(@shell, [name].concat(binding))
 
-  # have_pointer_lock: ->
-  #   'pointerLockElement' in @canvas ||
-  #   'mozPointerLockElement' in @canvas ||
-  #   'webkitPointerLockElement' in @canvas
-  #
-  # manage_lock: ->
-  #   @canvas.onclick = ~>
-  #     if @have_pointer_lock!
-  #       @canvas.requestPointerLock = @canvas.requestPointerLock ||
-  #                                    @canvas.mozRequestPointerLock ||
-  #                                    @canvas.webkitRequestPointerLock
-  #
-  #       @canvas.requestPointerLock()
-  #
-  #       lockError = console~error
-  #
-  #       document.addEventListener('pointerlockerror', lockError, false);
-  #       document.addEventListener('mozpointerlockerror', lockError, false);
-  #       document.addEventListener('webkitpointerlockerror', lockError, false);
-  #     else
-  #       console.log 'Pas de pointerlock'
+    @on 'key:grab_cursor', ~>
+      @shell.pointerLock = not @shell.pointerLock
+    @on 'key:fullscreen', ~>
+      @shell.fullscreen = not @shell.fullscreen
+
+  on_tick: ->
+    @tick++
+    @process_inputs!
+
+  process_inputs: ->
+    for name, b of @keys
+      if @shell.wasDown name
+        console.log "Pressed key:#{name}"
+        @emit "key:#{name}"
+    for name, b of @slowkeys
+      if @tick %% 5 == 0 and @shell.wasDown name
+        console.log "Pressed slowkey:#{name}"
+        @emit "key:#{name}"
+
+    dx = @shell.mouseX - @shell.prevMouseX
+    dy = @shell.mouseY - @shell.prevMouseY
+    if dx or dy
+      console.log "mouse:move #{dx} #{dy}"
+      @emit "mouse:move", dx, dy
 
   start: (pos) ->
     @pos                  = common.pos.world_pos(pos.x, pos.y, pos.z)
-
-    @canvas               = document.getElementById \renderCanvas
-
-
     @engine               = new bjs.Engine @canvas
-
 
     clear_color = new bjs.Color3(0.22, 0.6, 1.0)
     @scene                = new bjs.Scene @engine
@@ -77,17 +104,7 @@ export class Game
       # ..applyGravity      = true
       # ..checkCollisions   = true
       ..setTarget new bjs.Vector3(@pos.x, pos.y, pos.z + 1)
-      ..attachControl @canvas, false
-      ..keysUp            = [87]
-      ..keysDown          = [83]
-      ..keysRight         = [68]
-      ..keysLeft          = [65]
       ..on_pos_change @loader~on_pos_change
 
     @player               = new Player @scene, @socket, @camera
     @engine.runRenderLoop @scene~render
-
-    # @manage_lock!
-
-    # bjs.SceneOptimizer.OptimizeAsync @scene, bjs.SceneOptimizerOptions.ModerateDegradationAllowed!, (->), (->)
-    # @engine.isPointerLock = true

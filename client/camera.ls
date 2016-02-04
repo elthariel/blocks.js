@@ -9,7 +9,7 @@ export class Camera extends bjs.FreeCamera
     @applyGravity = true
     @ellipsoid = new BABYLON.Vector3(1, 2, 1);
     @minZ = 1
-    @maxZ = 3 * 32
+    @maxZ = 2 * 32
 
   on_pos_change: (@_pos_change) ->
 
