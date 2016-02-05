@@ -1,9 +1,15 @@
-class Pos
+export class Pos
   @size = consts.CHUNK_SIZE
   (@x, @y, @z) ->
 
   toString: ->
     "#{@x}:#{@y}:#{@z}"
+
+  to_s: ->
+    @toString()
+
+  to_a: ->
+    [@x, @y, @z]
 
   eq: (other) ->
     @x == other.x && @y == other.y && @z == other.z
@@ -22,10 +28,10 @@ class ChunkId extends Pos
 
 class WorldPos extends Pos
   to_chunk: ->
-    cid = new ChunkPos Math.floor(@x / @@size),
+    cid = new ChunkId Math.floor(@x / @@size),
       Math.floor(@y / @@size),
       Math.floor(@z / @@size)
-    cpos = new ChunkId(@x %% @@size, @y %% @@size, @z %% @@size)
+    cpos = new ChunkPos(@x %% @@size, @y %% @@size, @z %% @@size)
     return [cid, cpos]
 
   in_chunk_radius: (other_pos, chunk_radius) ->
@@ -40,6 +46,7 @@ class WorldPos extends Pos
 
 class ChunkPos extends Pos
   to_world: (cid) ->
+    ensure_cid cid
     new WorldPos(@x + @@size * cid.x,
       @y + @@size * cid.y,
       @z + @@size * cid.z)
@@ -61,6 +68,18 @@ export chunk_pos = (x, y, z) ->
     new ChunkPos x.x, x.y, x.z
   else
     new ChunkPos x, y, z
+
+export ensure_wpos = (p) ->
+  unless p instanceof WorldPos
+    console.log p, "is not a ChunkPos"
+
+export ensure_cid = (p) ->
+  unless p instanceof ChunkId
+    console.log p, "is not a ChunkPos"
+
+export ensure_cpos = (p) ->
+  unless p instanceof ChunkPos
+    console.log p, "is not a ChunkPos"
 
 export world_pos_from_camera_pos = (camera_pos) ->
   x = Math.floor camera_pos.x

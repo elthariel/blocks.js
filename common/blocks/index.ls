@@ -1,11 +1,13 @@
 require! {
-  \./base
-  \./basic
+  './base'
+  './basic'
+  './ore'
+  './wood'
 }
 
 module.exports = {
   base.Base
-  basic.Nil
-  basic.Air
-  basic.Dirt
+  basic
+  ore
+  wood
 }

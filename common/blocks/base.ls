@@ -1,13 +1,6 @@
 class Base
   block_registry = []
 
-  (x, y, z) ->
-    @initialize x, y, z
-
-  initialize: ->
-
-  @initialize = ->
-
   ###############################################
   #### Block Registry
 
@@ -39,15 +32,13 @@ class Base
   toJSON: ->
     id: @id!
 
-  ###############################################
-  #### Meshes
+  # Default block is Nil. Will be overriden by Base.register
+  id: ->
+    0
 
-  @create_mesh = -> ...
+  eq: (other) ->
+    @id! == other.id!
 
-  @create_instance = ->
-    unless @_mesh?
-      @_mesh = @create_mesh!
-      @_mesh_instance_count = 0
-    @_mesh.createInstance("#{@_mesh.name}:#{@_mesh_instance_count++}")
-
+  neq: (other) ->
+    not @eq(other)
 module.exports = {Base}
