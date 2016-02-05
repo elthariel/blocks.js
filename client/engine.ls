@@ -31,15 +31,17 @@ export class Engine
     light_pos             = new bjs.Vector3(0,1,0)
     @light                = new bjs.HemisphericLight 'light1', light_pos, @scene
 
-    camera_pos            = new bjs.Vector3(pos.x, pos.y, pos.z)
-    @camera               = new Camera('camera1', camera_pos, @scene, @game.inputs)
-      ..setTarget new bjs.Vector3(pos.x, pos.y, pos.z + 1)
-      ..on_pos_change @loader~on_pos_change
-
     Manager.scene @scene
     @map                  = new Map @scene, @game.socket
     @loader               = new ChunkLoader @game.socket, @map, pos
     @player               = new Player @scene, @socket, @camera
+
+    camera_pos            = new bjs.Vector3(pos.x, pos.y, pos.z)
+    @camera               = new Camera('camera1', camera_pos, @scene, @game.inputs)
+      ..setTarget new bjs.Vector3(pos.x, pos.y, pos.z + 1)
+      ..on_pos_change @loader~on_pos_change
+    @camera.events.on 'chunk-change', @loader~on_chunk_change
+
     @engine.runRenderLoop @scene~render
 
   tick: ->

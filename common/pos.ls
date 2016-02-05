@@ -1,5 +1,13 @@
 export class Pos
   @size = consts.CHUNK_SIZE
+
+  @from_s = (str) ->
+    a = str.split(':')
+    new @(a[0], a[1], a[2])
+
+  @from_vec3 = (vec3) ->
+    new @(vec3.x, vec3.y, vec3.z)
+
   (@x, @y, @z) ->
 
 
@@ -71,22 +79,28 @@ class ChunkPos extends Pos
 
 
 export chunk_id = (x, y, z) ->
-  if x.x?
-    new ChunkId x.x, x.y, x.z
+  if x.split?
+    ChunkId.from_s x
+  else if x.x?
+    ChunkId.from_vec3 x
   else
     new ChunkId x, y, z
 
 
 export world_pos = (x, y, z) ->
-  if x.x?
-    new WorldPos x.x, x.y, x.z
+  if x.split?
+    WorldPos.from_s x
+  else if x.x?
+    WorldPos.from_vec3 x
   else
     new WorldPos x, y, z
 
 
 export chunk_pos = (x, y, z) ->
-  if x.x?
-    new ChunkPos x.x, x.y, x.z
+  if x.split?
+    ChunkPos.from_s x
+  else if x.x?
+    ChunkPos.from_vec3 x
   else
     new ChunkPos x, y, z
 

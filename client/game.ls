@@ -64,11 +64,10 @@ export class Game
     @inputs.up.on 'fullscreen', ~>
       @shell.fullscreen = not @shell.fullscreen
     @inputs.up.on 'debug', ~>
-      if @engine.engine.debugLayer.isVisible()
-        @engine.engine.debugLayer.show()
+      if @engine.scene.debugLayer.isVisible()
+        @engine.scene.debugLayer.hide()
       else
-        @engine.engine.debugLayer.hide()
-
+        @engine.scene.debugLayer.show()
 
   handshake: ->
     @socket.once \hello ~>
