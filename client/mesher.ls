@@ -3,11 +3,11 @@ require! {
   'ndarray-show' : show
   './packed_bits' : {PackedBitsArray}
 }
-#
-# unless window?
-#   global.window = {}
-#   global.navigator = {}
-#   bjs = require 'babylonjs'
+
+unless window?
+  global.window = {}
+  global.navigator = {}
+  bjs = require 'babylonjs'
 
 Vec3 = bjs.Vector3
 vec3 = (x, y, z) ->
@@ -243,7 +243,7 @@ export class GreedyChunkMesher extends ChunkMesher
       * [base[0]+du[0],       base[1]+du[1],       base[2]+du[2]]
       * [base[0]+du[0]+dv[0], base[1]+du[1]+dv[1], base[2]+du[2]+dv[2]]
       * [base[0]+dv[0],       base[1]+dv[1],       base[2]+dv[2]]
-    console.log '(base,du,dv)=', base, du, dv, 'new_quad', quad
+    #console.log '(base,du,dv)=', base, du, dv, 'new_quad', quad
 
     idx = @vertices.length / 3
     for point in quad
@@ -299,14 +299,14 @@ export class GreedyChunkMesher extends ChunkMesher
   generate: (@base_position, @scene) ->
     # Iterate all 3 dimensions
     for d til 3
-      console.log 'Iterating dimension', d
+      # console.log 'Iterating dimension', d
       u = (d + 1) % 3
       v = (d + 2) % 3
       iter = [0, 0, 0]
       # For each dimension, consider front and back
       for back til 2
         normal = Chunk.normals[d * 2 + back]
-        console.log 'Iterating front', back, 'normal =', normal
+        # console.log 'Iterating front', back, 'normal =', normal
         for i til @_chunk.size!
           iter[d] = i
           for j til @_chunk.size!
@@ -322,7 +322,6 @@ export class GreedyChunkMesher extends ChunkMesher
               if back
                 base[d] += 1
               @create_quad(normal, base, du, dv)
-              console.log iter
 
   mesh: (scene) ->
     vxd = new bjs.VertexData
@@ -335,8 +334,8 @@ export class GreedyChunkMesher extends ChunkMesher
     vxd.applyToMesh mesh, false
 
 
-    console.log @positions
-    console.log @indices
+    # console.log @positions
+    # console.log @indices
 
     mesh
 
