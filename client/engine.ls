@@ -34,20 +34,21 @@ export class Engine
 
     Manager.scene @scene
     @map                  = new Map @scene, @game.socket
-    @loader               = new ChunkLoader @game.socket, @map, pos
+    #@loader               = new ChunkLoader @game.socket, @map, pos
     @player               = new Player @scene, @socket, @camera
 
     # camera_pos            = new bjs.Vector3(pos.x, pos.y, pos.z)
     camera_pos            = new bjs.Vector3(0, 0, -10)
     @camera               = new Camera('camera1', camera_pos, @scene, @game.inputs)
       ..setTarget bjs.Vector3.Zero! #new bjs.Vector3(pos.x, pos.y, pos.z + 1)
-      ..on_pos_change @loader~on_pos_change
-    @camera.events.on 'chunk-change', @loader~on_chunk_change
+    #  ..on_pos_change @loader~on_pos_change
+    #@camera.events.on 'chunk-change', @loader~on_chunk_change
 
-    @mesher = new GreedyChunkMesher SampleChunks.cube(4, 4)
+    #@mesher = new GreedyChunkMesher SampleChunks.random(5, 0.5)
+    @mesher = new GreedyChunkMesher SampleChunks.cube(8, 5)
     @mesher.generate(bjs.Vector3.Zero!, @scene)
     mat = new bjs.StandardMaterial 'test_material', @scene
-    mat.wireframe = true
+    #mat.wireframe = true
     #bjs.Mesh.CreateBox('sddsf', {height:1, width:1, depth:1}, @scene)
     mesh = @mesher.mesh @scene
     mesh.position = bjs.Vector3.Zero!

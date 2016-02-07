@@ -4,10 +4,10 @@ require! {
   './packed_bits' : {PackedBitsArray}
 }
 
-unless window?
-  global.window = {}
-  global.navigator = {}
-  bjs = require 'babylonjs'
+# unless window?
+#   global.window = {}
+#   global.navigator = {}
+#   bjs = require 'babylonjs'
 
 Vec3 = bjs.Vector3
 vec3 = (x, y, z) ->
@@ -39,8 +39,10 @@ export class SampleChunks
     c
 
 class ChunkMergeBuffer extends PackedBitsArray
-  @data_type Uint8Array, 3
+  @data_type Uint32Array, 3
+  @add_field('index', 16)
   @add_field('visible', 6)
+  @add_field('meshed', 6)
 
 # A block is represented as a 32 bits unsigned integer, whose bits are
 # interpreted as follow:
@@ -92,7 +94,13 @@ export class Chunk extends PackedBitsArray
     @_merge.get_visible(x, y, z)
 
   get_face_visible: (face_idx, x, y, z) ->
-    @_merge.get_bit(face_idx, x, y, z)
+    @_merge.get_bit(ChunkMergeBuffer.VISIBLE_OFFSET + face_idx, x, y, z)
+
+  get_meshed: (x, y, z) ->
+    @_merge.get_meshed(x, y, z)
+
+  get_face_meshed: (face_idx, x, y, z) ->
+    @_merge.get_bit(ChunkMergeBuffer.MESHED_OFFSET + face_idx, x, y, z)
 
   in_chunk: (x, y, z) ->
     0 <= x < @size! and 0 <= y < @size! and 0 <= z < @size!
@@ -237,7 +245,7 @@ export class GreedyChunkMesher extends ChunkMesher
     @normals = []
     @uvs = []
 
-  create_quad: (normal, base, du, dv) ->
+  create_quad: (normal, front, base, du, dv) ->
     quad =
       * [base[0],             base[1],             base[2]]
       * [base[0]+du[0],       base[1]+du[1],       base[2]+du[2]]
@@ -252,8 +260,12 @@ export class GreedyChunkMesher extends ChunkMesher
         @vertices.push point[i]
         @normals.push normal[i]
 
-    @indices.push(idx, idx + 1, idx + 2)
-    @indices.push(idx, idx + 2, idx + 3)
+    if front
+      @indices.push(idx, idx + 1, idx + 2)
+      @indices.push(idx, idx + 2, idx + 3)
+    else
+      @indices.push(idx, idx + 2, idx + 1)
+      @indices.push(idx, idx + 3, idx + 2)
 
 
   generate: (fun) ->
@@ -265,8 +277,8 @@ export class GreedyChunkMesher extends ChunkMesher
       iter = [0, 0, 0]
 
       # Then for each dimension, we iterate the front and back face
-      for back til 2
-        face_idx = d * 2 + back
+      for front til 2
+        face_idx = d * 2 + front
         normal = Chunk.normals[face_idx]
 
         # We then iterate from 0 to size on 3 axis, using the previously
@@ -288,40 +300,15 @@ export class GreedyChunkMesher extends ChunkMesher
               du[u] = 1
               dv[v] = 1
 
-              if @_chunk.get_face_visible face_idx, iter[0], iter[1], iter[2]
+              visible = @_chunk.get_face_visible face_idx, iter[0], iter[1], iter[2]
+              meshed = @_chunk.get_face_meshed face_idx, iter[0], iter[1], iter[2]
+              if visible and not meshed
                 base = iter.slice(0)
-                if back
+                unless front
                   base[d] += 1
 
-                @create_quad(normal, base, du, dv)
+                @create_quad(normal, front, base, du, dv)
 
-
-  generate: (@base_position, @scene) ->
-    # Iterate all 3 dimensions
-    for d til 3
-      # console.log 'Iterating dimension', d
-      u = (d + 1) % 3
-      v = (d + 2) % 3
-      iter = [0, 0, 0]
-      # For each dimension, consider front and back
-      for back til 2
-        normal = Chunk.normals[d * 2 + back]
-        # console.log 'Iterating front', back, 'normal =', normal
-        for i til @_chunk.size!
-          iter[d] = i
-          for j til @_chunk.size!
-            iter[u] = j
-            for k til @_chunk.size!
-              iter[v] = k
-              du = [0, 0, 0]
-              dv = [0, 0, 0]
-              du[u] = 1
-              dv[v] = 1
-
-              base = iter.slice(0)
-              if back
-                base[d] += 1
-              @create_quad(normal, base, du, dv)
 
   mesh: (scene) ->
     vxd = new bjs.VertexData
@@ -340,7 +327,7 @@ export class GreedyChunkMesher extends ChunkMesher
     mesh
 
 
-c = SampleChunks.cube(2, 2)
+c = SampleChunks.cube(3, 3)
 # c = SampleChunks.random(5, 0.2)
 m = new GreedyChunkMesher c
 m.generate!
@@ -360,4 +347,5 @@ m.generate!
 #c._merge.set_flat(0, 0xffff)
 #c._merge.set_bit(0, 0, 0, 0, 1)
 #console.log show(c._array)
-console.log show(c._merge._array)
+#console.log show(c._merge._array.data)
+#console.log c._merge.get_visible(1, 1, 1).toString(2)
