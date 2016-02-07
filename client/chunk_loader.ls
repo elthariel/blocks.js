@@ -25,7 +25,8 @@ export class ChunkLoader implements common.mixins.HasEvents
     unless @chunk_loading[cid]
       @chunk_loading[cid] = true
       console.log 'Requesting chunk: ', cid.to_s!
-      @emit 'get_chunk', cid
+      console.log 'chunk request DISABLED to dev smth else'
+      # @emit 'get_chunk', cid
 
 
   unload_chunk: (cid) ->

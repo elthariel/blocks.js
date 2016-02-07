@@ -5,6 +5,7 @@ require! {
   './map'    : {Map}
   './camera' : {Camera}
   './player' : {Player}
+  './mesher' : {CullingChunkMesher, GreedyChunkMesher, SampleChunks}
 }
 
 export class Engine
@@ -36,11 +37,21 @@ export class Engine
     @loader               = new ChunkLoader @game.socket, @map, pos
     @player               = new Player @scene, @socket, @camera
 
-    camera_pos            = new bjs.Vector3(pos.x, pos.y, pos.z)
+    # camera_pos            = new bjs.Vector3(pos.x, pos.y, pos.z)
+    camera_pos            = new bjs.Vector3(0, 0, -10)
     @camera               = new Camera('camera1', camera_pos, @scene, @game.inputs)
-      ..setTarget new bjs.Vector3(pos.x, pos.y, pos.z + 1)
+      ..setTarget bjs.Vector3.Zero! #new bjs.Vector3(pos.x, pos.y, pos.z + 1)
       ..on_pos_change @loader~on_pos_change
     @camera.events.on 'chunk-change', @loader~on_chunk_change
+
+    @mesher = new GreedyChunkMesher SampleChunks.cube(4, 4)
+    @mesher.generate(bjs.Vector3.Zero!, @scene)
+    mat = new bjs.StandardMaterial 'test_material', @scene
+    mat.wireframe = true
+    #bjs.Mesh.CreateBox('sddsf', {height:1, width:1, depth:1}, @scene)
+    mesh = @mesher.mesh @scene
+    mesh.position = bjs.Vector3.Zero!
+    mesh.material = mat
 
     @engine.runRenderLoop @scene~render
 

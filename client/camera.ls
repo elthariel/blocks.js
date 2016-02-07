@@ -10,7 +10,7 @@ export class Camera extends bjs.FreeCamera
     super name, pos, scene
 
     @checkCollisions = true
-    @applyGravity = true
+    # @applyGravity = true
     @ellipsoid = new BABYLON.Vector3(1, 2, 1);
     @minZ = 1
     @maxZ = 2 * 32
@@ -54,6 +54,7 @@ export class Camera extends bjs.FreeCamera
     for name, vec of @movements.global
       if @inputs.state[name]
         @cameraDirection.addInPlace vec
+
 
     # Rorate camera
     @cameraRotation.x += @inputs.state.dy * @rotation_speed
