@@ -67,6 +67,7 @@ export class Chunk extends PackedBitsArray
   ->
     super ...
     @_merge = new ChunkMergeBuffer(@size!)
+    @_block_ids = []
     @_merge.reset!
 
   # Update the bit field in the merge chunk. Marking as 'visible' every
@@ -76,19 +77,24 @@ export class Chunk extends PackedBitsArray
       if @get_air(x, y, z)
         return
 
+      id = @get_block_id(x, y, z)
+      if id not in @_block_ids
+        @_block_ids += id
+
       for idx til @@normals.length
         nx = x + @@normals[idx][0]
         ny = y + @@normals[idx][1]
         nz = z + @@normals[idx][2]
 
         unless @in_chunk(nx, ny, nz)
-          @_merge.set_bit(idx, x, y, z, 1)
+          @set_face_visible(idx, x, y, z, 1)
           # console.log nx, ny, nz, 'out of chunk'
           continue
 
         if @get_air(nx, ny, nz) or @get_transparent(nx, ny, nz)
           # console.log nx, ny, nz, 'air'
-          @_merge.set_bit(idx, x, y, z, 1)
+          @set_face_visible(idx, x, y, z, 1)
+
 
   get_visible: (x, y, z) ->
     @_merge.get_visible(x, y, z)
@@ -96,11 +102,19 @@ export class Chunk extends PackedBitsArray
   get_face_visible: (face_idx, x, y, z) ->
     @_merge.get_bit(ChunkMergeBuffer.VISIBLE_OFFSET + face_idx, x, y, z)
 
+  set_face_visible: (face_idx, x, y, z, value) ->
+    @_merge.set_bit(ChunkMergeBuffer.VISIBLE_OFFSET + face_idx, x, y, z, value)
+
+
   get_meshed: (x, y, z) ->
     @_merge.get_meshed(x, y, z)
 
   get_face_meshed: (face_idx, x, y, z) ->
     @_merge.get_bit(ChunkMergeBuffer.MESHED_OFFSET + face_idx, x, y, z)
+
+  set_face_meshed: (face_idx, x, y, z, value) ->
+    @_merge.set_bit(ChunkMergeBuffer.MESHED_OFFSET + face_idx, x, y, z, value)
+
 
   in_chunk: (x, y, z) ->
     0 <= x < @size! and 0 <= y < @size! and 0 <= z < @size!
@@ -134,11 +148,11 @@ export class CullingChunkMesher extends ChunkMesher
         wpos = vec3(x, y, z).addInPlace position
         name = "block:#{wpos.x}:#{wpos.y}:#{wpos.z}"
         console.log name
+
         mesh = bjs.Mesh.CreateBox(name, {height:1, width:1, depth:1}, scene)
         mesh.isVisible = true
         mesh.material = mat
         mesh.position = wpos
-    scene.createOrUpdateSelectionOctree!
 
 # export class TestMesh extends ChunkMesher
 #   ->
@@ -165,77 +179,6 @@ export class CullingChunkMesher extends ChunkMesher
 #           console.log 'Open Block', x, y
 #           open_block = [x, y]
 
-export class TestChunkMesher extends ChunkMesher
-  ->
-    super ...
-    @_chunk.compute_visible!
-    @vertices = []
-    @indices = []
-    @normals = []
-    @uvs = []
-
-  create_quad: (normal, base, du, dv) ->
-    quad =
-      * [base[0],             base[1],             base[2]]
-      * [base[0]+du[0],       base[1]+du[1],       base[2]+du[2]]
-      * [base[0]+du[0]+dv[0], base[1]+du[1]+dv[1], base[2]+du[2]+dv[2]]
-      * [base[0]+dv[0],       base[1]+dv[1],       base[2]+dv[2]]
-    console.log '(base,du,dv)=', base, du, dv, 'new_quad', quad
-
-    idx = @vertices.length / 3
-    for point in quad
-      @uvs.push(1, 1)
-      for i til 3
-        @vertices.push point[i]
-        @normals.push normal[i]
-
-    @indices.push(idx, idx + 1, idx + 2)
-    @indices.push(idx, idx + 2, idx + 3)
-
-  generate: (@base_position, @scene) ->
-    # Iterate all 3 dimensions
-    for d til 3
-      console.log 'Iterating dimension', d
-      u = (d + 1) % 3
-      v = (d + 2) % 3
-      iter = [0, 0, 0]
-      # For each dimension, consider front and back
-      for back til 2
-        normal = Chunk.normals[d * 2 + back]
-        console.log 'Iterating front', back, 'normal =', normal
-        for i til @_chunk.size!
-          iter[d] = i
-          for j til @_chunk.size!
-            iter[u] = j
-            for k til @_chunk.size!
-              iter[v] = k
-              du = [0, 0, 0]
-              dv = [0, 0, 0]
-              du[u] = 1
-              dv[v] = 1
-
-              base = iter.slice(0)
-              if back
-                base[d] += 1
-              @create_quad(normal, base, du, dv)
-              console.log iter
-
-  mesh: (scene) ->
-    vxd = new bjs.VertexData
-    vxd.indices = @indices
-    vxd.positions = @vertices
-    vxd.normals = @normals
-    vxd.uvs = @uvs
-
-    mesh = new bjs.Mesh 'name', scene
-    vxd.applyToMesh mesh, false
-
-
-    console.log @positions
-    console.log @indices
-
-    mesh
-
 export class GreedyChunkMesher extends ChunkMesher
   ->
     super ...
@@ -245,20 +188,25 @@ export class GreedyChunkMesher extends ChunkMesher
     @normals = []
     @uvs = []
 
-  create_quad: (normal, front, base, du, dv) ->
+  create_quad: (normal, front, base, du, dv, w) ->
     quad =
       * [base[0],             base[1],             base[2]]
       * [base[0]+du[0],       base[1]+du[1],       base[2]+du[2]]
       * [base[0]+du[0]+dv[0], base[1]+du[1]+dv[1], base[2]+du[2]+dv[2]]
       * [base[0]+dv[0],       base[1]+dv[1],       base[2]+dv[2]]
+
     #console.log '(base,du,dv)=', base, du, dv, 'new_quad', quad
 
     idx = @vertices.length / 3
     for point in quad
-      @uvs.push(1, 1)
       for i til 3
         @vertices.push point[i]
         @normals.push normal[i]
+
+    @uvs.push 0, 0
+    @uvs.push 0, 1
+    @uvs.push w, 1
+    @uvs.push w, 0
 
     if front
       @indices.push(idx, idx + 1, idx + 2)
@@ -268,7 +216,7 @@ export class GreedyChunkMesher extends ChunkMesher
       @indices.push(idx, idx + 3, idx + 2)
 
 
-  generate: (fun) ->
+  generate: (id) ->
     # Iterate all 3 dimension. d, u, and v will be the index of the dimensions
     # we iterate. This will allow us to iterate on x/y/z then y/z/x then z/y/x.
     for d til 3
@@ -298,16 +246,29 @@ export class GreedyChunkMesher extends ChunkMesher
               du = [0, 0, 0]
               dv = [0, 0, 0]
               du[u] = 1
-              dv[v] = 1
 
-              visible = @_chunk.get_face_visible face_idx, iter[0], iter[1], iter[2]
-              meshed = @_chunk.get_face_meshed face_idx, iter[0], iter[1], iter[2]
-              if visible and not meshed
+              # Here we look for adjacent faces to merge
+              # FIXME: We only do it in one direction now
+              iter2 = iter.slice(0)
+              w = 0
+              for k2 from k til @_chunk.size!
+                iter2[v] = k2
+                visible = @_chunk.get_face_visible face_idx, iter2[0], iter2[1], iter2[2]
+                meshed = @_chunk.get_face_meshed face_idx, iter2[0], iter2[1], iter2[2]
+
+                if visible and not meshed
+                  @_chunk.set_face_meshed face_idx, iter2[0], iter2[1], iter2[2], 1
+                  dv[v]++; w++
+                  # console.log 'should create quad', dv[v]
+                else
+                  break
+
+              if du[u] and dv[v]
                 base = iter.slice(0)
                 unless front
                   base[d] += 1
 
-                @create_quad(normal, front, base, du, dv)
+                @create_quad(normal, front, base, du, dv, w)
 
 
   mesh: (scene) ->
@@ -319,6 +280,7 @@ export class GreedyChunkMesher extends ChunkMesher
 
     mesh = new bjs.Mesh 'name', scene
     vxd.applyToMesh mesh, false
+    mesh.freezeWorldMatrix!
 
 
     # console.log @positions
@@ -327,10 +289,10 @@ export class GreedyChunkMesher extends ChunkMesher
     mesh
 
 
-c = SampleChunks.cube(3, 3)
-# c = SampleChunks.random(5, 0.2)
-m = new GreedyChunkMesher c
-m.generate!
+# c = SampleChunks.cube(3, 3)
+# # c = SampleChunks.random(5, 0.2)
+# m = new GreedyChunkMesher c
+# m.generate!
 #console.log m.indices
 #for i til m.vertices.length / 3
 #  console.log m.vertices[i * 3], m.vertices[i * 3 + 1], m.vertices[i * 3 + 2]

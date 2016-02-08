@@ -44,12 +44,19 @@ export class Engine
     #  ..on_pos_change @loader~on_pos_change
     #@camera.events.on 'chunk-change', @loader~on_chunk_change
 
-    #@mesher = new GreedyChunkMesher SampleChunks.random(5, 0.5)
-    @mesher = new GreedyChunkMesher SampleChunks.cube(8, 5)
+    @mesher = new GreedyChunkMesher SampleChunks.random(16, 0.4)
+    #@mesher = new GreedyChunkMesher SampleChunks.cube(8, 5)
     @mesher.generate(bjs.Vector3.Zero!, @scene)
     mat = new bjs.StandardMaterial 'test_material', @scene
     #mat.wireframe = true
-    #bjs.Mesh.CreateBox('sddsf', {height:1, width:1, depth:1}, @scene)
+    box = bjs.Mesh.CreateBox('sddsf', {height:1, width:1, depth:1}, @scene)
+    box.material = mat
+    tex = new bjs.Texture('textures/blocks/dirt.png', @scene, true, false,
+                          bjs.Texture.NEAREST_SAMPLINGMODE)
+    mat.ambientTexture = tex
+    mat.specularColor = new bjs.Color3 0,0,0
+    mat.diffuseColor = new bjs.Color3 1,1,1
+    mat.disableLighting = true
     mesh = @mesher.mesh @scene
     mesh.position = bjs.Vector3.Zero!
     mesh.material = mat

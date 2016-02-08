@@ -7,6 +7,10 @@ require! {
 # limitation, the maximum size of the uing is 32bits
 export class PackedBitsArray
   @data_type = (data_type, data_dimension) ->
+    @__bitmasks = []
+    for bit til 32
+      @__bitmasks[bit] = 1 .<<. bit
+
     @prototype.data_type = ->
       data_type
     @prototype.dimension = ->
@@ -66,10 +70,11 @@ export class PackedBitsArray
     @set.apply(@, pos.concat(new_value))
 
   get_bit: (bit, ...pos) ->
-    @__get_field.apply @, [1 .<<. bit, bit].concat(pos)
+    @get.apply(@, pos) .&. @constructor.__bitmasks[bit]
 
   set_bit: (bit, ...pos, value) ->
-    @__set_field.apply @, [1 .<<. bit, bit].concat(pos).concat(value)
+    mask = @constructor.__bitmasks[bit]
+    @__set_field.apply @, [mask, bit].concat(pos).concat(value)
 
   (@_size) ->
     type = @data_type!
