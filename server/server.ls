@@ -22,17 +22,19 @@ class SocketIoServer
     @world.on_new_connection(socket)
 
   prepare_client: ->
-    b = browserify extensions: <[.ls .js]>
-    b.transform browserify-livescript
-    b.add path.resolve __dirname, '../client/index.ls'
-    
     @app.use express.static __dirname + \/../client/public
     @app.use '/bjs', express.static __dirname + \/../client/node_modules/babylonjs
-    @app.get \/index.js (req, res) ->
-      b.bundle (err, assets) ->
-        console.log err if err?
-        return res.status 500 .send err if err?
-        res.status 200 .send assets
+
+    ['index', 'worker'] |> each (route) ~>
+      b = browserify extensions: <[.ls .js]>
+      b.transform browserify-livescript
+      b.add path.resolve __dirname, "../client/#{route}.ls"
+
+      @app.get "/#{route}.js", (req, res) ->
+        b.bundle (err, assets) ->
+          console.log err if err?
+          return res.status 500 .send err if err?
+          res.status 200 .send assets
 
   start: ->
     @prepare_client!

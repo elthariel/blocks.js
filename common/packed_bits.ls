@@ -76,27 +76,27 @@ export class PackedBitsArray
     mask = @constructor.__bitmasks[bit]
     @__set_field.apply @, [mask, bit].concat(pos).concat(value)
 
-  (@_size) ->
+  (@_size, data = null) ->
     type = @data_type!
-    data = new type(@_size ** @dimension!)
+    unless data
+      data = new type(@_size ** @dimension!)
 
     data_desc = []
     for til @dimension! then data_desc.push(@_size)
 
     @_array = ndarray(data, data_desc)
 
+  data: ->
+    @_array.data
   size: ->
     @_size
 
   get: (...args) ->
     @_array.get.apply(@_array, args)
-
   get_flat: (idx) ->
     @_array.data[idx]
-
   set: (...args) ->
     @_array.set.apply(@_array, args)
-
   set_flat: (idx, value) ->
     @_array.data[idx] = value
 

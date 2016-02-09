@@ -1,70 +1,59 @@
 require! {
-  ndarray
-  './blocks'
+  \../common
+  './packed_bits' : {PackedBitsArray}
 }
 
-class Chunk
-  const @size = consts.CHUNK_SIZE
 
-  ->
-    @_blocks = ndarray(new Array(@@size ** 3), [@@size, @@size, @@size])
+# A block is represented as a 32 bits unsigned integer, whose bits are
+# interpreted as follow:
+#
+# | block_id | block_variant | air | transparent | unused
+# |    14    |      12       |  1  |      1      |   4
+export class Chunk extends PackedBitsArray
+  @data_type Uint32Array, 3
+  @add_field('id', 14)
+  @add_field('variant', 12)
+  @add_bit('air')
+  @add_bit('transparent')
+  @add_field('unused', 4)
 
-  fill_from_bitmap: (bitmap) ->
-    @map (x, y, z, block) ->
-      new (blocks.Base.registry![bitmap[x][y][z]]) x, y, z
+  (size, @_cid, data = null) ->
+    super size, data
 
-  get: (x, y, z) ->
-    @_blocks.get x, y, z
+  in_chunk: (x, y, z) ->
+    0 <= x < @size! and 0 <= y < @size! and 0 <= z < @size!
 
-  get_flat: (i) ->
-    @_blocks.data[i]
+  cid: ->
+    @_cid
 
-  set: (x, y, z, block) ->
-    @_blocks.set x, y, z, block
+  toString: ->
+    "#{@_cid}"
 
-  set_flat: (i, block) ->
-    @_blocks.data[i] = block
+  each: (fun) ->
+    for x from 0 til @size!
+      for y from 0 til @size!
+        for z from 0 til @size!
+          fun.call(@, x, y, z)
 
-  each: (f) ->
-    for x til @@size
-      for y til @@size
-        for z til @@size
-          f.call @, x, y, z, @get(x, y, z)
 
-  each_flat: (f) ->
-    for i til @@size ** 3
-      f.call @, i, @get_flat(i)
 
-  eq: (other) ->
-    @reduce true (v, i, b) ->
-      v and b.eq(other.get_flat(i))
+export class SampleChunks
+  @cube = (chunk_size, cube_size) ->
+    c = new Chunk(chunk_size)
+    c.reset!
+    c.each (x, y, z) ->
+      if x < cube_size and y < cube_size && z < cube_size
+        c.set_id x, y, z, 1
+      else
+        c.set_air x, y, z, 1
+    c
 
-  map: (f) ->
-    for x til @@size
-      for y til @@size
-        for z til @@size
-          block = f.call(@, x, y, z, @get(x, y, z))
-          @set(x, y, z, block)
-
-  map_flat: (fun) ->
-    for i til @@size ** 3
-      @set_flat i, fun(i, @get_flat(i))
-
-  reduce: (value, fun) ->
-    for i til @@size ** 3
-      value = fun.call(@, value, i, @get_flat(i))
-    value
-
-  toJSON: ->
-    @_blocks.data
-
-  @fromJSON = (json) ->
-    chunk = new this
-    chunk.fromJSON(json)
-    chunk
-
-  fromJSON: (json) ->
-    @map_flat (i) ->
-      blocks.Base.fromJSON(json[i])
-
-module.exports = {Chunk}
+  @random = (size, chance) ->
+    c = new Chunk(size)
+    c.reset!
+    c.each (x, y, z) ->
+      if Math.random! > chance
+        c.set_id x, y, z, 1
+      else
+        c.set_air x, y, z, 1
+    c

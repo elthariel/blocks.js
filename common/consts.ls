@@ -4,6 +4,6 @@
 #
 
 const global.consts =
-  CHUNK_SIZE: 32
+  CHUNK_SIZE: 24
 
 module.exports = global.consts

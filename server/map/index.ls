@@ -4,7 +4,7 @@ require! {
   \./seed : {Seed}
 }
 
-class Map extends common.Map
+export class Map extends common.Map
   ->
     super ...
     @seed = Seed.generate!
@@ -16,6 +16,3 @@ class Map extends common.Map
       console.log "Generating chunk #{cid}"
       chunk = @generator.generate_chunk(cid)
       @set cid, chunk
-
-
-module.exports = {Map}

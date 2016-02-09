@@ -1,16 +1,18 @@
 require! {
   # The magic module
-  \./consts
+  './consts'
 
   # Submodules
-  \./mixins
+  './mixins'
 
   # Classes
-  \./blocks
-  \./chunk
-  \./map
-  \./player
-  \./pos
+  './blocks'
+  './chunk'
+  './map'
+  './packed_bits'
+  './player'
+  './pos'
+  './registry'
 }
 
 log_time = (msg, fun) ->
@@ -26,6 +28,8 @@ module.exports = {
   log_time
   map.Map
   mixins
+  packed_bits.PackedBitsArray
   player.Player
   pos
+  registry.Registry
 }
