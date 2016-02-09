@@ -1,36 +1,17 @@
-class Base
-  block_registry = []
+require! {
+  '../registry' : {Registry}
+}
 
-  ###############################################
-  #### Block Registry
+Registry.new_category 'block'
+
+export class Base
+  block_by_id = []
 
   @register = (id) ->
+    @id = id
     @::id = ->
       id
-
-    if block_registry[id]?
-      msg = "There's already a block with id #{id}: #{that.displayName}"
-      throw new Error msg
-
-    block_registry[id] = this
-    console.log "Registered #{@displayName} with id #{id}"
-
-  @registry = ->
-    block_registry
-
-  ###############################################
-  #### Serialization
-
-  @fromJSON = (o) ->
-    klass = @registry()[o.id]
-    block = new klass
-    block.fromJSON(o)
-    block
-
-  fromJSON: (o) ->
-
-  toJSON: ->
-    id: @id!
+    Registry.register_block id: id, @
 
   # Default block is Nil. Will be overriden by Base.register
   id: ->
@@ -41,4 +22,3 @@ class Base
 
   neq: (other) ->
     not @eq(other)
-module.exports = {Base}

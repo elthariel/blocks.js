@@ -1,17 +1,25 @@
 require! {
   '../common'
+  'events'
 }
+
+class CameraEmitter extends events
 
 export class Camera extends bjs.FreeCamera
   (name, pos, scene, @inputs) ->
     super name, pos, scene
 
     @checkCollisions = true
-    @applyGravity = true
+    # @applyGravity = true
     @ellipsoid = new BABYLON.Vector3(1, 2, 1);
     @minZ = 1
     @maxZ = 2 * 32
 
+    @events = new CameraEmitter
+    @init_inputs(pos)
+
+
+  init_inputs: (pos) ->
     @movement_speed = 0.1
     @rotation_speed = 0.001
     @movements =
@@ -47,6 +55,7 @@ export class Camera extends bjs.FreeCamera
       if @inputs.state[name]
         @cameraDirection.addInPlace vec
 
+
     # Rorate camera
     @cameraRotation.x += @inputs.state.dy * @rotation_speed
     @cameraRotation.y += @inputs.state.dx * @rotation_speed
@@ -58,13 +67,15 @@ export class Camera extends bjs.FreeCamera
   process_movement: ->
     current_wpos = common.pos.world_pos_from_vec3 @position
 
-    # if current_wpos.neq(@last_wpos)
-    #   console.log 'New wpos', current_wpos
-    #   # on_block_change(current_wpos)
-    #
-    # if current_wpos.cid().neq(@last_wpos.cid())
-    #   console.log 'New cid', current_wpos.cid()
-    #   # on_chunk_change(current_wpos.cid())
+    if current_wpos.neq(@last_wpos)
+      # console.log 'New wpos', current_wpos
+      @events.emit('block-change', current_wpos)
+
+    if current_wpos.cid().neq(@last_wpos.cid())
+      # console.log 'New cid', current_wpos.cid()
+      @events.emit('chunk-change', current_wpos.cid())
+
+    @last_wpos = current_wpos
 
 
   tick: ->

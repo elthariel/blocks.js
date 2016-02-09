@@ -1,12 +1,12 @@
 require! {
-  \./seed : {Seed}
-  \./image_generator : img
-  \./biome_map : {BiomeMap}
-  \./chunk : {Chunk}
-  \../../common
+  './seed' : {Seed}
+  './image_generator' : img
+  './biome_map' : {BiomeMap}
+  '../../common'
+
 }
 
-class WorldGenerator
+export class WorldGenerator
   (@seed) ->
     @biome = new BiomeMap(@seed)
     height_norm = new img.ValueCombiner(@seed, [
@@ -19,20 +19,19 @@ class WorldGenerator
 
   generate_chunk: (cid) ->
     common.pos.ensure_cid cid
-    c = new Chunk
-    console.log 'cid', cid
-    c.map (x, y, z) ~>
-      cpos = common.pos.chunk_pos(x, y, z)
-      wpos = cpos.to_world(cid)
-      height = @heightmap.point(wpos.x, wpos.z)
+    c = new common.Chunk consts.CHUNK_SIZE, cid
+    c.each (x, y, z) ~>
+      cpos = common.pos.chunk_pos x, y, z
+      wpos = cpos.to_world cid
+      height = @heightmap.point wpos.x, wpos.z
 
+      id = null
       if wpos.y > height
         if wpos.y > 0
-          new common.blocks.basic.Air
+          c.set_id x, y, z, common.Registry.block('Air')
         else
-          new common.blocks.basic.StillWater
+          c.set_id x, y, z, common.Registry.block('StillWater')
       else
-        new common.blocks.basic.Dirt
-    c
+        c.set_id x, y, z, common.Registry.block('Dirt')
 
-module.exports = {WorldGenerator}
+    c

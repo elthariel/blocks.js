@@ -1,8 +1,10 @@
-require! \../common
+require! {
+  '../common',
+}
 
 pos = common.pos
 
-class IncomingPlayer
+export class IncomingPlayer
   (@world, @socket, @id) ->
     @socket.once 'hello', @~on_hello
     @socket.emit 'hello', id: @id
@@ -10,7 +12,7 @@ class IncomingPlayer
   on_hello: (o) ->
     @world.on_new_player(@socket, @id, o.name)
 
-class Player extends common.Player
+export class Player extends common.Player
   (@world, socket, @id, @name) ->
     @register_socket socket
     @events \move, \get_chunk
@@ -25,12 +27,10 @@ class Player extends common.Player
 
   on_get_chunk: (o) ->
     cid = pos.chunk_id(o.x, o.y, o.z)
-    console.log "Requested chunk #{cid.toString()}"
     chunk = @world.map.get(cid)
-    @emit 'chunk', {pos: cid, chunk: chunk}
+    #@emit 'chunk', {pos: cid, chunk: BSON.serialize(chunk}
+    @emit 'chunk', BSON.serialize(chunk, false, false, false)
 
   on_move: (o) ->
     @pos.update(o.x, o.y, o.z)
     @emit_to_nearby_players 'move', {id: @id, pos: @pos}
-
-module.exports = {Player, IncomingPlayer}
